@@ -73,10 +73,10 @@
             </div>
 
             <div class="flex gap-2">
-                <button onclick="publish()" id="btn-publish" class="flex-1 bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xl">
+                <button onclick="publish()" id="btn-publish" class="flex-1 bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xl cursor-pointer">
                     SAVE & PUBLISH 🚀
                 </button>
-                <button onclick="resetForm()" class="bg-gray-100 text-gray-500 px-4 rounded-2xl font-bold hover:bg-gray-200 transition text-xs uppercase">Reset</button>
+                <button onclick="resetForm()" class="bg-gray-100 text-gray-500 px-6 rounded-2xl font-bold hover:bg-gray-200 transition text-xs uppercase cursor-pointer">Reset</button>
             </div>
 
             <!-- New: Global Site Theme & Events -->
@@ -221,74 +221,6 @@
                     <button onclick="saveMarketSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-lg active:scale-95">
                         Update Market Time/Name ⚡
                     </button>
-                </div>
-            </div>
-
-            <!-- New: Single Market Quick Result Editor -->
-            <div class="mt-8 pt-8 border-t border-gray-100">
-                <h3 class="text-sm font-black text-blue-600 uppercase tracking-widest mb-4">🎯 Single Market Quick Result Editor (Custom Date/Market)</h3>
-                <div class="bg-blue-50/60 p-6 rounded-3xl border border-blue-100 space-y-4">
-                    <p class="text-xs font-bold text-gray-500">Kisi bhi single market, random date, ya month ka result direct edit karein:</p>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Select Market</label>
-                            <select id="single-edit-market" onchange="loadSingleMarketChartData()" class="w-full p-3 bg-white border rounded-xl font-bold outline-none focus:border-blue-500">
-                                <option value="DB">Delhi Bazar (DB)</option>
-                                <option value="SG">Shree Ganesh (SG)</option>
-                                <option value="FB">Faridabad (FB)</option>
-                                <option value="GZ">Ghaziabad (GZ)</option>
-                                <option value="GL">Gali (GL)</option>
-                                <option value="DS">Disawar (DS)</option>
-                                <option value="HK">Haryana King (HK)</option>
-                                <option value="RB">Ram Bazar (RB)</option>
-                                <option value="AK">Ambala King (AK)</option>
-                                <option value="HN">Himachal Night (HN)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Result Number (2-Digit)</label>
-                            <input type="text" id="single-edit-val" maxlength="2" placeholder="e.g. 71 or XX" class="w-full p-3 bg-white border border-blue-300 rounded-xl text-center text-xl font-black text-blue-900 focus:border-blue-500 outline-none">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Year</label>
-                            <select id="single-edit-year" onchange="loadSingleMarketChartData()" class="p-2 w-full border rounded-lg text-xs font-bold bg-white">
-                                <!-- JS Populated 2016-2026 -->
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Month</label>
-                            <select id="single-edit-month" onchange="loadSingleMarketChartData()" class="p-2 w-full border rounded-lg text-xs font-bold bg-white">
-                                <option value="09">September</option>
-                                <option value="08">August</option>
-                                <option value="07">July</option>
-                                <option value="06">June</option>
-                                <option value="05">May</option>
-                                <option value="04">April</option>
-                                <option value="03">March</option>
-                                <option value="02">February</option>
-                                <option value="01">January</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Day (Tarikh)</label>
-                            <select id="single-edit-day" onchange="loadSingleMarketChartData()" class="p-2 w-full border rounded-lg text-xs font-bold bg-white">
-                                <!-- JS Populated 1-31 -->
-                            </select>
-                        </div>
-                    </div>
-
-                    <button onclick="saveSingleMarketData()" class="w-full bg-blue-700 text-white py-3.5 rounded-2xl font-black text-sm uppercase hover:bg-blue-800 transition shadow-lg active:scale-95">
-                        UPDATE THIS SINGLE MARKET RESULT 🎯
-                    </button>
-                    <p id="single-edit-status" class="text-xs text-center font-bold text-emerald-600 hidden"></p>
                 </div>
             </div>
 
@@ -751,6 +683,35 @@
                 alert("Firebase Error: " + err.message);
                 btn.disabled = false;
                 btn.innerText = "SAVE & PUBLISH 🚀";
+            });
+        }
+
+        function updateYesterdayOnly() {
+            const id = document.getElementById('market-select').value;
+            const yesterdayVal = document.getElementById('yesterday-val').value.trim();
+
+            if (!id) return alert("Please select a market first!");
+            if (!yesterdayVal) return alert("Please enter Yesterday's number!");
+
+            const yestIST = SattaDateEngine.getYesterdayIST();
+            const yestY = yestIST.yearStr;
+            const yestM = yestIST.monthStr;
+            const yestD = yestIST.dayStr;
+
+            const updates = {};
+            updates[`results/${id}/yesterday`] = yesterdayVal;
+            updates[`charts/${yestY}/${yestM}/${yestD}/${id}`] = yesterdayVal;
+
+            db.ref().update(updates).then(function() {
+                const status = document.getElementById('status');
+                if (status) {
+                    status.innerText = `✅ Yesterday's Result (${yesterdayVal}) Updated for ${id}! 🚀`;
+                    status.classList.remove('hidden');
+                    setTimeout(() => status.classList.add('hidden'), 3000);
+                }
+                alert(`Yesterday's Result (${yesterdayVal}) Updated Successfully for ${id}! 🚀`);
+            }).catch(function(err) {
+                alert("Firebase Error: " + err.message);
             });
         }
 
