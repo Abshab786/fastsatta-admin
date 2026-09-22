@@ -336,7 +336,7 @@
             { id: 'FB', name: 'FARIDABAD' },
             { id: 'AK', name: 'AMBALA KING' },
             { id: 'GZ', name: 'GAZIYABAD' },
-            { id: 'HN', name: 'HP NIGHT' },
+            { id: 'HN', name: 'HIMACHAL NIGHT' },
             { id: 'GL', name: 'GALI' },
             { id: 'DS', name: 'DISAWAR' }
         ];
@@ -422,8 +422,11 @@
         window.addEventListener('load', checkAutoLogin);
 
         function initDashboard() {
-            // Listen for dynamic markets from Firebase
+            // Auto-repair Firebase market names if swapped
             if (typeof db !== 'undefined' && db) {
+                db.ref('settings/markets/SG').update({ id: 'SG', name: 'SHREE GANESH', time: '04:40 PM', resTime: '16:40' });
+                db.ref('settings/markets/HN').update({ id: 'HN', name: 'HIMACHAL NIGHT', time: '10:40 PM', resTime: '22:40' });
+
                 db.ref('settings/markets').on('value', function(snap) {
                     const data = snap.val();
                     updateMarketSelects(data);
