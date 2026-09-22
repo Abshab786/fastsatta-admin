@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Master Admin - THEFASTSATTA.COM</title>
+    <!-- Favicon and App Icons -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" href="images/logo.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+</head>
+<body class="bg-slate-900 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Login Layer -->
+    <div id="login-layer" class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-2xl">
+        <h2 class="text-2xl font-black text-center text-blue-700 mb-6">ADMIN LOGIN</h2>
+        <input type="password" id="admin-pass" placeholder="Enter Admin Password" onkeyup="if(event.key==='Enter') checkPass()" class="w-full p-4 border-2 rounded-xl mb-4 text-center text-xl focus:border-blue-500 outline-none" autocapitalize="none" autocomplete="off">
+        <button type="button" onclick="checkPass()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 active:bg-blue-800 transition cursor-pointer text-lg">LOGIN 🚀</button>
+        <p id="login-error" class="text-red-500 text-center font-bold text-sm mt-3 hidden">Invalid Password!</p>
+    </div>
+
+    <!-- Dashboard Layer -->
+    <div id="admin-layer" class="w-full max-w-md bg-white p-6 rounded-2xl shadow-2xl hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-xl font-black text-blue-700 uppercase">Master Control</h1>
+            <button onclick="localStorage.removeItem('admin_logged_in'); location.href='admin-panel.html';" class="text-xs font-bold text-gray-400 underline cursor-pointer">LOGOUT</button>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-blue-50 p-3 rounded-lg text-[10px] font-bold text-blue-600 border border-blue-100">
+                INFO: Changes made here will reflect globally in real-time.
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-gray-600 mb-1">1. Select Market</label>
+                <select id="market-select" onchange="loadMarketData(this.value)" class="w-full p-4 bg-gray-50 border-2 rounded-xl font-bold outline-none focus:border-blue-500 appearance-none">
+                    <!-- JS Injected -->
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Today's Number</label>
+                    <input type="text" id="today-val" maxlength="2" placeholder="XX" class="w-full p-4 text-3xl text-center font-black bg-blue-50 text-blue-800 border-2 border-blue-100 rounded-xl outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Yesterday's</label>
+                    <input type="text" id="yesterday-val" maxlength="2" placeholder="--" class="w-full p-4 text-3xl text-center font-black bg-gray-50 text-gray-400 border-2 border-gray-100 rounded-xl outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 bg-red-50 p-4 rounded-xl border border-red-100">
+                <input type="checkbox" id="is-live" class="w-6 h-6 rounded">
+                <div>
+                    <div class="text-sm font-black text-red-600">SET AS LIVE NOW</div>
+                    <div class="text-[10px] text-red-400 font-bold">This will show blinking "Wait..." on website</div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                <input type="checkbox" id="show-instantly" class="w-6 h-6 rounded">
+                <div>
+                    <div class="text-sm font-black text-blue-600">SHOW INSTANTLY (हथो हाथ दिखाएँ)</div>
+                    <div class="text-[10px] text-blue-400 font-bold">If checked, result will show NOW regardless of time</div>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="publish()" id="btn-publish" class="flex-1 bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xl">
+                    SAVE & PUBLISH 🚀
+                </button>
+                <button onclick="resetForm()" class="bg-gray-100 text-gray-500 px-4 rounded-2xl font-bold hover:bg-gray-200 transition text-xs uppercase">Reset</button>
+            </div>
+
+            <!-- New: Global Site Theme & Events -->
+            <div class="mt-8 pt-8 border-t border-gray-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest">Master Controls</h3>
+                    <span id="current-theme-badge" class="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded font-black uppercase">Normal Theme</span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                    <button onclick="updateTheme('normal')" class="p-3 rounded-2xl border-2 border-blue-200 bg-blue-50 text-blue-900 font-black text-xs hover:border-blue-500 transition uppercase shadow-xs">Classic Royal 👑</button>
+                    <button onclick="updateTheme('dark')" class="p-3 rounded-2xl border-2 border-slate-700 bg-slate-900 text-yellow-400 font-black text-xs hover:border-yellow-400 transition uppercase shadow-xs">Ultra Dark VIP 🌙</button>
+                    <button onclick="updateTheme('emerald')" class="p-3 rounded-2xl border-2 border-emerald-200 bg-emerald-50 text-emerald-800 font-black text-xs hover:border-emerald-500 transition uppercase shadow-xs">Emerald Fortune 💚</button>
+                    <button onclick="updateTheme('cyber')" class="p-3 rounded-2xl border-2 border-cyan-200 bg-slate-900 text-cyan-400 font-black text-xs hover:border-cyan-400 transition uppercase shadow-xs">Cyber Neon ⚡</button>
+                    <button onclick="updateTheme('crimson')" class="p-3 rounded-2xl border-2 border-red-200 bg-red-50 text-red-700 font-black text-xs hover:border-red-500 transition uppercase shadow-xs">Crimson Fire 🔥</button>
+                    <button onclick="updateTheme('royal')" class="p-3 rounded-2xl border-2 border-purple-200 bg-purple-50 text-purple-800 font-black text-xs hover:border-purple-500 transition uppercase shadow-xs">Royal Crown 💜</button>
+                    <button onclick="updateTheme('ocean')" class="p-3 rounded-2xl border-2 border-sky-200 bg-sky-50 text-sky-800 font-black text-xs hover:border-sky-500 transition uppercase shadow-xs">Ocean Ice 🌊</button>
+                    <button onclick="updateTheme('diwali')" class="p-3 rounded-2xl border-2 border-orange-200 bg-orange-50 text-orange-700 font-black text-xs hover:border-orange-500 transition uppercase shadow-xs">Diwali Gold 🪔</button>
+                    <button onclick="updateTheme('holi')" class="p-3 rounded-2xl border-2 border-pink-200 bg-pink-50 text-pink-700 font-black text-xs hover:border-pink-500 transition uppercase shadow-xs">Holi Colors 🎨</button>
+                    <button onclick="updateTheme('sunday')" class="p-3 rounded-2xl border-2 border-yellow-200 bg-yellow-50 text-yellow-800 font-black text-xs hover:border-yellow-500 transition uppercase shadow-xs">Sunday Special ☀️</button>
+                </div>
+
+                <div class="space-y-4 bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase tracking-widest">1. Top Alert Message</label>
+                        <select onchange="document.getElementById('special-msg-input').value = this.value" class="w-full p-2 mb-2 bg-white border rounded-lg text-[10px] font-bold text-blue-600 outline-none">
+                            <option value="">-- Quick Select Template --</option>
+                            <option value="आज दिसावर में सिंगल जोड़ी धमाका होगा! 🚀">आज दिसावर में धमाका</option>
+                            <option value="गली का लीक नंबर आ चुका है, जल्दी देखें! 🔥">गली लीक नंबर</option>
+                            <option value="आज का महा-धमाका! 100% गारंटीड पास जोड़ी। 💰">गारंटीड पास जोड़ी</option>
+                            <option value="संडे जैकपॉट: आज मोटा कमाओ, गेम लोड हो गया है! ✨">संडे जैकपॉट</option>
+                            <option value="दिवाली धमाका: आज सबकी किस्मत खुलेगी! 🪔">दिवाली धमाka</option>
+                            <option value="होली स्पेशल: रंग और नंबर दोनों बरसेंगे! 🎨">होली स्पेशल</option>
+                            <option value="रिजल्ट आने वाला है, दिल थाम के बैठिए! ⚡">रिजल्ट आने वाला है</option>
+                        </select>
+                        <input type="text" id="special-msg-input" placeholder="e.g. आज धमाका होगा!" class="w-full p-4 bg-white border-2 border-slate-100 rounded-xl text-sm font-bold focus:border-blue-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 mb-2 uppercase tracking-widest">2. Marquee Scrolling Text</label>
+                        <select onchange="document.getElementById('marquee-input').value = this.value" class="w-full p-2 mb-2 bg-white border rounded-lg text-[10px] font-bold text-emerald-600 outline-none">
+                            <option value="">-- Quick Select Template --</option>
+                            <option value="दिसावर, फरीदाबाद, गाजियाबाद और गली का सबसे तेज़ रिजल्ट यहीं मिलेगा। गेम खेलें अपने रिस्क पर।">Standard Fast Result</option>
+                            <option value="धोखेबाजों से सावधान! असली और सबसे तेज़ रिजल्ट सिर्फ THEFASTSATTA.COM पर ही मिलता है।">Anti-Fraud Warning</option>
+                            <option value="गेम खेलने के लिए नीचे दिए गए व्हाट्सएप बटन पर क्लिक करें और सबसे भरोसेमंद खाईवाल के पास खेलें।">Promotion Line</option>
+                            <option value="रिजल्ट अपडेट होने में 2-5 मिनट का समय लग सकता है, पेज को रिफ्रेश करते रहें।">Technical Update</option>
+                            <option value="सट्टा किंग रिजल्ट 2026: यहाँ आपको मिलेगा सबसे सटीक और तेज़ अपडेट।">SEO Line</option>
+                            <option value="आज का सॉलिड हर्फ और सिंगल जोड़ी के लिए हमारा टेलीग्राम चैनल अभी जॉइन करें।">Telegram Join</option>
+                        </select>
+                        <input type="text" id="marquee-input" placeholder="Enter scrolling notice..." class="w-full p-4 bg-white border-2 border-slate-100 rounded-xl text-sm font-bold focus:border-blue-500 outline-none">
+                    </div>
+
+                    <div id="lucky-num-box" class="hidden">
+                        <label class="block text-[10px] font-black text-amber-500 mb-2 uppercase tracking-widest">3. Sunday Lucky Leak (Only for Sunday)</label>
+                        <input type="text" id="lucky-input" maxlength="2" placeholder="XX" class="w-full p-4 bg-amber-50 border-2 border-amber-200 rounded-xl text-2xl text-center font-black text-amber-700 focus:border-amber-500 outline-none">
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-[10px] font-black text-red-600 uppercase tracking-widest">Master Leak Box Settings</label>
+                            <input type="checkbox" id="show-leak-toggle" class="w-5 h-5">
+                        </div>
+                        <select onchange="document.getElementById('leak-msg-input').value = this.value" class="w-full p-2 mb-2 bg-white border rounded-lg text-[10px] font-bold text-red-600 outline-none">
+                            <option value="">-- Quick Select Leak --</option>
+                            <option value="गली लीक जोड़ी आ चुकी है, जल्दी मैसेज करें! 🔥">Gali Leak</option>
+                            <option value="दिसावर का पक्का नंबर लोड हो गया है। 🚀">Desawar Confirmed</option>
+                            <option value="आज का महा-धमाका लीक रिज़ल्ट आ गया है! 💰">Maha Dhamaka</option>
+                            <option value="जैकपॉट नंबर केवल व्हाट्सएप पर मिलेगा। ✨">Jackpot Only WA</option>
+                        </select>
+                        <input type="text" id="leak-msg-input" placeholder="Enter leak message..." class="w-full p-3 bg-white border-2 border-slate-100 rounded-xl text-sm font-bold mb-4 focus:border-red-500 outline-none">
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[10px] font-black text-blue-600 uppercase tracking-widest">WhatsApp Button</label>
+                                    <label class="flex items-center gap-1 cursor-pointer">
+                                        <input type="checkbox" id="show-wa-toggle" class="w-4 h-4 cursor-pointer" checked>
+                                        <span class="text-[9px] font-bold text-gray-500">Enable</span>
+                                    </label>
+                                </div>
+                                <input type="text" id="wa-link" placeholder="https://wa.me/..." class="w-full p-3 bg-white border rounded-xl text-[10px] font-bold outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-[10px] font-black text-blue-600 uppercase tracking-widest">Telegram Button</label>
+                                    <label class="flex items-center gap-1 cursor-pointer">
+                                        <input type="checkbox" id="show-tg-toggle" class="w-4 h-4 cursor-pointer" checked>
+                                        <span class="text-[9px] font-bold text-gray-500">Enable</span>
+                                    </label>
+                                </div>
+                                <input type="text" id="tg-link" placeholder="https://t.me/..." class="w-full p-3 bg-white border rounded-xl text-[10px] font-bold outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-[10px] font-black text-blue-600 uppercase tracking-widest">4. Promo Popup Settings</label>
+                            <input type="checkbox" id="show-promo-toggle" class="w-5 h-5">
+                        </div>
+                        <select onchange="document.getElementById('promo-msg-input').value = this.value" class="w-full p-2 mb-2 bg-white border rounded-lg text-[10px] font-bold text-blue-600 outline-none">
+                            <option value="">-- Quick Select Promo --</option>
+                            <option value="आज दिसावर में सिंगल जोड़ी का महा-धमाका होगा! जल्दी व्हाट्सएप पर संपर्क करें। 🚀">दिसावर महा-धमाका</option>
+                            <option value="गली का लीक नंबर आ चुका है! केवल व्हाट्सएप पर ही मिलेगा, जल्दी मैसेज करें। 🔥">गली लीक नंबर</option>
+                            <option value="दिवाली स्पेशल ऑफर: 10 का 1000 पाने के लिए अभी ग्रुप जॉइन करें। 🪔">दिवाली स्पेशल</option>
+                            <option value="बड़ी खबर: आज होगा सबका लॉस कवर! सिंगल जोड़ी लीक हो चुकी है। 💰">लॉस कवर धमाका</option>
+                        </select>
+                        <textarea id="promo-msg-input" placeholder="Enter popup message..." class="w-full p-3 bg-white border-2 border-slate-100 rounded-xl text-sm font-bold focus:border-blue-500 outline-none h-20"></textarea>
+                    </div>
+
+                    <button onclick="publishGlobalSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-xl active:scale-95">
+                        Update Website Now ⚡
+                    </button>
+                </div>
+            </div>
+
+            <!-- New: Market Time & Name Management -->
+            <div class="mt-8 pt-8 border-t border-gray-100">
+                <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Market Settings ⏰</h3>
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 mb-2 uppercase">1. Select Market to Edit</label>
+                        <select id="edit-market-select" onchange="loadMarketSettings(this.value)" class="w-full p-3 bg-white border rounded-xl font-bold outline-none focus:border-blue-500">
+                            <!-- JS Injected -->
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Market Name</label>
+                            <input type="text" id="edit-market-name" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Display Time (e.g. 11:30 PM)</label>
+                            <input type="text" id="edit-market-time" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Result Check Time (24hr Format - e.g. 23:30)</label>
+                        <input type="text" id="edit-market-restime" placeholder="HH:MM" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
+                    </div>
+
+                    <button onclick="saveMarketSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-lg active:scale-95">
+                        Update Market Time/Name ⚡
+                    </button>
+                </div>
+            </div>
+
+            <!-- New: Single Market Quick Result Editor -->
+            <div class="mt-8 pt-8 border-t border-gray-100">
+                <h3 class="text-sm font-black text-blue-600 uppercase tracking-widest mb-4">🎯 Single Market Quick Result Editor (Custom Date/Market)</h3>
+                <div class="bg-blue-50/60 p-6 rounded-3xl border border-blue-100 space-y-4">
+                    <p class="text-xs font-bold text-gray-500">Kisi bhi single market, random date, ya month ka result direct edit karein:</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Select Market</label>
+                            <select id="single-edit-market" onchange="loadSingleMarketChartData()" class="w-full p-3 bg-white border rounded-xl font-bold outline-none focus:border-blue-500">
+                                <option value="DB">Delhi Bazar (DB)</option>
+                                <option value="SG">Shree Ganesh (SG)</option>
+                                <option value="FB">Faridabad (FB)</option>
+                                <option value="GZ">Ghaziabad (GZ)</option>
+                                <option value="GL">Gali (GL)</option>
+                                <option value="DS">Disawar (DS)</option>
+                                <option value="HK">Haryana King (HK)</option>
+                                <option value="RB">Ram Bazar (RB)</option>
+                                <option value="AK">Ambala King (AK)</option>
+                                <option value="HN">Himachal Night (HN)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Result Number (2-Digit)</label>
+                            <input type="text" id="single-edit-val" maxlength="2" placeholder="e.g. 71 or XX" class="w-full p-3 bg-white border border-blue-300 rounded-xl text-center text-xl font-black text-blue-900 focus:border-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Year</label>
+                            <select id="single-edit-year" onchange="loadSingleMarketChartData()" class="p-2 w-full border rounded-lg text-xs font-bold bg-white">
+                                <!-- JS Populated 2016-2026 -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Month</label>
+                            <select id="single-edit-month" onchange="loadSingleMarketChartData()" class="p-2 w-full border rounded-lg text-xs font-bold bg-white">
+                                <option value="09">September</option>
+                                <option value="08">August</option>
+                                <option value="07">July</option>
+                                <option value="06">June</option>
+                                <option value="05">May</option>
+                                <option value="04">April</option>
+                                <option value="03">March</option>
+                                <option value="02">February</option>
+                                <option value="01">January</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Day (Tarikh)</label>
+                            <select id="single-edit-day" onchange="loadSingleMarketChartData()" class="p-2 w-full border rounded-lg text-xs font-bold bg-white">
+                                <!-- JS Populated 1-31 -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <button onclick="saveSingleMarketData()" class="w-full bg-blue-700 text-white py-3.5 rounded-2xl font-black text-sm uppercase hover:bg-blue-800 transition shadow-lg active:scale-95">
+                        UPDATE THIS SINGLE MARKET RESULT 🎯
+                    </button>
+                    <p id="single-edit-status" class="text-xs text-center font-bold text-emerald-600 hidden"></p>
+                </div>
+            </div>
+
+            <!-- New: Monthly Chart Management -->
+            <div class="mt-8 pt-8 border-t border-gray-100">
+                <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Chart Management 📊</h3>
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                    <div class="grid grid-cols-3 gap-2">
+                        <select id="chart-year" class="p-2 border rounded-lg text-xs font-bold">
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                        </select>
+                        <select id="chart-month" class="p-2 border rounded-lg text-xs font-bold">
+                            <option value="09">September</option>
+                            <option value="08">August</option>
+                            <option value="07">July</option>
+                            <option value="06">June</option>
+                            <option value="05">May</option>
+                            <option value="04">April</option>
+                            <option value="03">March</option>
+                            <option value="02">February</option>
+                            <option value="01">January</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <select id="chart-day" class="p-2 border rounded-lg text-xs font-bold">
+                            <!-- JS will populate 1-31 -->
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Haryana King (HK)</label>
+                            <input type="text" id="chart-hk" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Ram Bazar (RB)</label>
+                            <input type="text" id="chart-rb" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Delhi Bazar (DB)</label>
+                            <input type="text" id="chart-db" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Shree Ganesh (SG)</label>
+                            <input type="text" id="chart-sg" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Faridabad (FB)</label>
+                            <input type="text" id="chart-fb" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Ambala King (AK)</label>
+                            <input type="text" id="chart-ak" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Ghaziabad (GZ)</label>
+                            <input type="text" id="chart-gz" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">HP Night (HN)</label>
+                            <input type="text" id="chart-hn" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Gali (GL)</label>
+                            <input type="text" id="chart-gl" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Desawar (DS)</label>
+                            <input type="text" id="chart-ds" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <button onclick="saveChartData()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-blue-700 transition shadow-lg active:scale-95">
+                        Update Chart Data 🚀
+                    </button>
+                    <button onclick="restoreRealPrimaryData()" class="w-full mt-2 bg-emerald-500 text-white py-2.5 rounded-xl font-bold text-xs uppercase hover:bg-emerald-600 transition">
+                        Upload Real Chart Data (DB, SG, FB, GZ, GL, DS) 🛠️
+                    </button>
+                    <p class="text-[9px] text-gray-400 text-center font-bold">Note: This updates the Monthly Record Chart on home page.</p>
+                </div>
+            </div>
+
+            <div id="status" class="text-center p-3 rounded-lg bg-green-100 text-green-700 font-bold hidden">
+                ✅ Updated on Website!
+            </div>
+        </div>
+
+        <div class="mt-10 border-t pt-6">
+            <h3 class="font-bold text-gray-400 text-xs mb-4 uppercase tracking-widest">Current Live Data:</h3>
+            <div id="current-list" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                <!-- Status items -->
+            </div>
+            <button onclick="if(confirm('Delete all global results?')) { db.ref('results').remove(); }" class="mt-6 w-full text-[10px] font-bold text-gray-300 hover:text-red-400 transition uppercase tracking-widest">Reset Full Global Data</button>
+        </div>
+    </div>
+
+    <script>
+        let MARKET_LIST = [
+            { id: 'HK', name: 'HARYANA KING' },
+            { id: 'RB', name: 'RAM BAZAR' },
+            { id: 'DB', name: 'DELHI BAZAR' },
+            { id: 'SG', name: 'SHREE GANESH' },
+            { id: 'FB', name: 'FARIDABAD' },
+            { id: 'AK', name: 'AMBALA KING' },
+            { id: 'GZ', name: 'GAZIYABAD' },
+            { id: 'HN', name: 'HP NIGHT' },
+            { id: 'GL', name: 'GALI' },
+            { id: 'DS', name: 'DISAWAR' }
+        ];
+
+        const SattaDateEngine = {
+            getISTDate: function(dateObj = new Date()) {
+                const utc = dateObj.getTime() + (dateObj.getTimezoneOffset() * 60000);
+                const istTime = new Date(utc + (3600000 * 5.5));
+                const yyyy = istTime.getFullYear();
+                const mm = (istTime.getMonth() + 1).toString().padStart(2, '0');
+                const dd = istTime.getDate().toString().padStart(2, '0');
+                return {
+                    yyyy,
+                    mm,
+                    dd,
+                    yearStr: yyyy.toString(),
+                    monthStr: mm,
+                    dayStr: dd,
+                    formatted: `${dd}-${mm}-${yyyy}`,
+                    isoStr: `${yyyy}-${mm}-${dd}`
+                };
+            },
+            getTodayIST: function() {
+                return this.getISTDate(new Date());
+            },
+            getYesterdayIST: function() {
+                const now = new Date();
+                now.setDate(now.getDate() - 1);
+                return this.getISTDate(now);
+            }
+        };
+
+        function checkPass() {
+            try {
+                const passEl = document.getElementById('admin-pass');
+                const passRaw = passEl ? passEl.value.trim() : '';
+                const passLower = passRaw.toLowerCase();
+
+                const loginLayer = document.getElementById('login-layer');
+                const adminLayer = document.getElementById('admin-layer');
+                const loginError = document.getElementById('login-error');
+
+                if (passRaw === 'Satta@8090' || passLower === 'satta@8090' || passLower === 'admin123') {
+                    localStorage.setItem('admin_logged_in', 'true');
+
+                    if (loginLayer) {
+                        loginLayer.classList.add('hidden');
+                        loginLayer.style.display = 'none';
+                    }
+                    if (adminLayer) {
+                        adminLayer.classList.remove('hidden');
+                        adminLayer.style.display = 'block';
+                    }
+                    if (loginError) loginError.style.display = 'none';
+
+                    initDashboard();
+                } else {
+                    if (loginError) {
+                        loginError.innerText = "Wrong Password! Try: Satta@8090";
+                        loginError.classList.remove('hidden');
+                        loginError.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error("Login Handler Error:", err);
+                const loginLayer = document.getElementById('login-layer');
+                const adminLayer = document.getElementById('admin-layer');
+                if (loginLayer) loginLayer.style.display = 'none';
+                if (adminLayer) adminLayer.style.display = 'block';
+            }
+        }
+
+        function checkAutoLogin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'true' || localStorage.getItem('admin_logged_in') === 'true') {
+                const loginLayer = document.getElementById('login-layer');
+                const adminLayer = document.getElementById('admin-layer');
+                if (loginLayer) loginLayer.style.display = 'none';
+                if (adminLayer) adminLayer.style.display = 'block';
+                initDashboard();
+            }
+        }
+        window.addEventListener('load', checkAutoLogin);
+
+        function initDashboard() {
+            // Listen for dynamic markets from Firebase
+            if (typeof db !== 'undefined' && db) {
+                db.ref('settings/markets').on('value', function(snap) {
+                    const data = snap.val();
+                    updateMarketSelects(data);
+                });
+            }
+
+            // Auto-shift Today to Yesterday logic (Safe null check)
+            const todayInput = document.getElementById('today-val');
+            const yesterdayInput = document.getElementById('yesterday-val');
+
+            if (todayInput && yesterdayInput) {
+                todayInput.addEventListener('input', function() {
+                    if (this.value.length === 2 && lastLoadedToday !== 'XX' && lastLoadedToday !== '---') {
+                        if (this.value !== lastLoadedToday) {
+                            yesterdayInput.value = lastLoadedToday;
+                            yesterdayInput.classList.add('bg-yellow-50', 'border-yellow-200');
+                            setTimeout(() => yesterdayInput.classList.remove('bg-yellow-50', 'border-yellow-200'), 2000);
+                        }
+                    }
+                });
+            }
+
+            // Dynamically populate Year select in Admin Panel
+            const chartYearSelect = document.getElementById('chart-year');
+            const singleYearSelect = document.getElementById('single-edit-year');
+            const curY = new Date().getFullYear();
+            const curM = (new Date().getMonth() + 1).toString().padStart(2, '0');
+            const curD = new Date().getDate().toString().padStart(2, '0');
+
+            if (chartYearSelect) {
+                chartYearSelect.innerHTML = '';
+                for (let y = curY; y >= 2016; y--) {
+                    chartYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                }
+                chartYearSelect.value = curY.toString();
+            }
+
+            if (singleYearSelect) {
+                singleYearSelect.innerHTML = '';
+                for (let y = curY; y >= 2016; y--) {
+                    singleYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                }
+                singleYearSelect.value = curY.toString();
+            }
+
+            const chartMonthSelect = document.getElementById('chart-month');
+            if (chartMonthSelect) {
+                chartMonthSelect.value = curM;
+            }
+
+            const singleMonthSelect = document.getElementById('single-edit-month');
+            if (singleMonthSelect) {
+                singleMonthSelect.value = curM;
+            }
+
+            // Populate Day select 1-31
+            const daySelect = document.getElementById('chart-day');
+            const singleDaySelect = document.getElementById('single-edit-day');
+
+            if (daySelect) {
+                daySelect.innerHTML = '';
+                for(let i=1; i<=31; i++) {
+                    const val = i.toString().padStart(2, '0');
+                    daySelect.innerHTML += `<option value="${val}">${val}</option>`;
+                }
+                daySelect.value = curD;
+            }
+
+            if (singleDaySelect) {
+                singleDaySelect.innerHTML = '';
+                for(let i=1; i<=31; i++) {
+                    const val = i.toString().padStart(2, '0');
+                    singleDaySelect.innerHTML += `<option value="${val}">${val}</option>`;
+                }
+                singleDaySelect.value = curD;
+            }
+
+            daySelect.addEventListener('change', loadExistingChartData);
+            document.getElementById('chart-month').addEventListener('change', loadExistingChartData);
+            document.getElementById('chart-year').addEventListener('change', loadExistingChartData);
+
+            loadExistingChartData();
+            loadSingleMarketChartData();
+            updateStatusList();
+        }
+
+        function updateMarketSelects(cloudMarkets) {
+            const select = document.getElementById('market-select');
+            const editSelect = document.getElementById('edit-market-select');
+
+            select.innerHTML = '';
+            editSelect.innerHTML = '<option value="">-- Select to Edit --</option>';
+
+            const defaultList = [
+                { id: 'HK', name: 'HARYANA KING', time: '01:30 PM', resTime: '13:30' },
+                { id: 'RB', name: 'RAM BAZAR', time: '02:30 PM', resTime: '14:30' },
+                { id: 'DB', name: 'DELHI BAZAR', time: '03:10 PM', resTime: '15:10' },
+                { id: 'SG', name: 'SHREE GANESH', time: '04:40 PM', resTime: '16:40' },
+                { id: 'FB', name: 'FARIDABAD', time: '06:10 PM', resTime: '18:10' },
+                { id: 'AK', name: 'AMBALA KING', time: '07:30 PM', resTime: '19:30' },
+                { id: 'GZ', name: 'GAZIYABAD', time: '10:00 PM', resTime: '22:00' },
+                { id: 'HN', name: 'HIMACHAL NIGHT', time: '10:40 PM', resTime: '22:40' },
+                { id: 'GL', name: 'GALI', time: '12:00 AM', resTime: '00:00' },
+                { id: 'DS', name: 'DISAWAR', time: '05:10 AM', resTime: '05:10' }
+            ];
+
+            const marketsToUse = defaultList.map(m => {
+                if (cloudMarkets && cloudMarkets[m.id]) {
+                    return { ...m, ...cloudMarkets[m.id] };
+                }
+                return m;
+            });
+
+            MARKET_LIST = marketsToUse.map(m => ({ id: m.id, name: m.name }));
+
+            marketsToUse.forEach(m => {
+                select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+                editSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+            });
+
+            loadMarketData(marketsToUse[0].id);
+        }
+
+        function loadMarketSettings(id) {
+            if(!id) return;
+            db.ref('settings/markets/' + id).once('value', function(snap) {
+                const data = snap.val();
+                if(data) {
+                    document.getElementById('edit-market-name').value = data.name;
+                    document.getElementById('edit-market-time').value = data.time;
+                    document.getElementById('edit-market-restime').value = data.resTime;
+                }
+            });
+        }
+
+        function saveMarketSettings() {
+            const id = document.getElementById('edit-market-select').value;
+            if(!id) return alert("Please select a market first!");
+
+            const updatedMarket = {
+                name: document.getElementById('edit-market-name').value,
+                time: document.getElementById('edit-market-time').value,
+                resTime: document.getElementById('edit-market-restime').value
+            };
+
+            db.ref('settings/markets/' + id).update(updatedMarket).then(function() {
+                alert("Market Settings Updated Successfully! 🚀");
+            });
+        }
+
+        let lastLoadedToday = 'XX';
+
+        function loadMarketData(id) {
+            if (!id) return;
+
+            const yestIST = SattaDateEngine.getYesterdayIST();
+            const yestY = yestIST.yearStr;
+            const yestM = yestIST.monthStr;
+            const yestD = yestIST.dayStr;
+
+            // Fetch yesterday's exact historical chart record for this market
+            let fallbackYesterday = '';
+            if (typeof REAL_PRIMARY_MARKET_DATA !== 'undefined' && REAL_PRIMARY_MARKET_DATA[yestY] && REAL_PRIMARY_MARKET_DATA[yestY][yestM] && REAL_PRIMARY_MARKET_DATA[yestY][yestM][yestD]) {
+                fallbackYesterday = REAL_PRIMARY_MARKET_DATA[yestY][yestM][yestD][id] || '';
+            }
+
+            db.ref(`charts/${yestY}/${yestM}/${yestD}/${id}`).once('value', function(chartSnap) {
+                const chartYestVal = chartSnap.val();
+
+                db.ref('results/' + id).once('value', function(snap) {
+                    const data = snap.val() || {};
+                    lastLoadedToday = data.today || 'XX';
+
+                    const todayInput = document.getElementById('today-val');
+                    const yesterdayInput = document.getElementById('yesterday-val');
+
+                    if (todayInput) {
+                        todayInput.value = (data.today === 'XX' || data.today === '---') ? '' : data.today;
+                    }
+
+                    // Auto-fill Yesterday's number from historical record or saved results!
+                    let finalYest = chartYestVal || (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
+                    if (yesterdayInput) {
+                        yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX') ? '' : finalYest;
+                    }
+
+                    const isLive = document.getElementById('is-live');
+                    if (isLive) isLive.checked = data.live || false;
+
+                    const showInstantly = document.getElementById('show-instantly');
+                    if (showInstantly) showInstantly.checked = data.showInstantly || false;
+                });
+            });
+        }
+
+        function publish() {
+            const btn = document.getElementById('btn-publish');
+            btn.disabled = true;
+            btn.innerText = "UPDATING...";
+
+            const id = document.getElementById('market-select').value;
+            if (!id) {
+                btn.disabled = false;
+                btn.innerText = "SAVE & PUBLISH 🚀";
+                return alert("Please select a market!");
+            }
+
+            const marketObj = MARKET_LIST.find(m => m.id === id);
+            const mName = marketObj ? marketObj.name : "Market";
+
+            const todayVal = document.getElementById('today-val').value.trim() || 'XX';
+            const yesterdayVal = document.getElementById('yesterday-val').value.trim() || '--';
+            const isLive = document.getElementById('is-live').checked;
+
+            const todayIST = SattaDateEngine.getTodayIST();
+            const yestIST = SattaDateEngine.getYesterdayIST();
+
+            const curY = todayIST.yearStr;
+            const curM = todayIST.monthStr;
+            const curD = todayIST.dayStr;
+
+            const yestY = yestIST.yearStr;
+            const yestM = yestIST.monthStr;
+            const yestD = yestIST.dayStr;
+
+            const newData = {
+                name: mName,
+                today: todayVal,
+                yesterday: yesterdayVal,
+                live: isLive,
+                showInstantly: document.getElementById('show-instantly').checked,
+                updatedAt: Date.now()
+            };
+
+            // Atomic 1-click update: Syncs live result card AND monthly chart table simultaneously!
+            const updates = {};
+            updates['results/' + id] = newData;
+
+            if (todayVal && todayVal !== 'XX') {
+                updates[`charts/${curY}/${curM}/${curD}/${id}`] = todayVal;
+            }
+
+            if (yesterdayVal && yesterdayVal !== '--' && yesterdayVal !== '---') {
+                updates[`charts/${yestY}/${yestM}/${yestD}/${id}`] = yesterdayVal;
+            }
+
+            db.ref().update(updates).then(function() {
+                const status = document.getElementById('status');
+                status.innerText = "✅ Result & Monthly Chart Updated Live! 🚀";
+                status.classList.remove('hidden');
+
+                btn.disabled = false;
+                btn.innerText = "SAVE & PUBLISH 🚀";
+                setTimeout(function() { status.classList.add('hidden'); }, 3000);
+                updateStatusList();
+            }).catch(function(err) {
+                alert("Firebase Error: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "SAVE & PUBLISH 🚀";
+            });
+        }
+
+        function loadExistingChartData() {
+            const y = document.getElementById('chart-year').value;
+            const m = document.getElementById('chart-month').value;
+            const d = document.getElementById('chart-day').value;
+
+            db.ref(`charts/${y}/${m}/${d}`).once('value', function(snap) {
+                const data = snap.val();
+                const mIds = ['hk', 'rb', 'db', 'sg', 'fb', 'ak', 'gz', 'hn', 'gl', 'ds'];
+
+                mIds.forEach(id => {
+                    const el = document.getElementById('chart-' + id);
+                    if (!el) return;
+                    let val = '';
+                    if (data) {
+                        if (typeof data === 'object' && !Array.isArray(data)) {
+                            val = data[id.toUpperCase()] || '';
+                        } else if (Array.isArray(data)) {
+                            if (id === 'ds') val = data[0];
+                            else if (id === 'fb') val = data[1];
+                            else if (id === 'gz') val = data[2];
+                            else if (id === 'gl') val = data[3];
+                        }
+                    }
+                    el.value = (val === 'XX' || val === '---') ? '' : val;
+                });
+            });
+        }
+
+        function saveChartData() {
+            const y = document.getElementById('chart-year').value;
+            const m = document.getElementById('chart-month').value;
+            const d = document.getElementById('chart-day').value;
+
+            const mIds = ['HK', 'RB', 'DB', 'SG', 'FB', 'AK', 'GZ', 'HN', 'GL', 'DS'];
+            const dataObj = {};
+
+            mIds.forEach(id => {
+                const el = document.getElementById('chart-' + id.toLowerCase());
+                dataObj[id] = el ? (el.value.trim() || "XX") : "XX";
+            });
+
+            db.ref(`charts/${y}/${m}/${d}`).update(dataObj).then(function() {
+                alert(`Chart Data for ${d}-${m}-${y} Updated Successfully! 🚀`);
+            });
+        }
+
+        function loadSingleMarketChartData() {
+            const mId = document.getElementById('single-edit-market') ? document.getElementById('single-edit-market').value : '';
+            const y = document.getElementById('single-edit-year') ? document.getElementById('single-edit-year').value : '';
+            const m = document.getElementById('single-edit-month') ? document.getElementById('single-edit-month').value : '';
+            const d = document.getElementById('single-edit-day') ? document.getElementById('single-edit-day').value : '';
+
+            if (!mId || !y || !m || !d) return;
+
+            db.ref(`charts/${y}/${m}/${d}/${mId}`).once('value', function(snap) {
+                const val = snap.val();
+                const el = document.getElementById('single-edit-val');
+                if (el) {
+                    el.value = (val && val !== 'XX' && val !== '---') ? val : '';
+                }
+            });
+        }
+
+        function saveSingleMarketData() {
+            const mId = document.getElementById('single-edit-market').value;
+            const y = document.getElementById('single-edit-year').value;
+            const m = document.getElementById('single-edit-month').value;
+            const d = document.getElementById('single-edit-day').value;
+            const val = document.getElementById('single-edit-val').value.trim() || 'XX';
+
+            if (!mId || !y || !m || !d) return alert("Select Market, Year, Month, and Day!");
+
+            db.ref(`charts/${y}/${m}/${d}/${mId}`).set(val).then(function() {
+                const status = document.getElementById('single-edit-status');
+                if (status) {
+                    status.innerText = `✅ Saved ${mId} = ${val} for Date ${d}-${m}-${y}!`;
+                    status.classList.remove('hidden');
+                    setTimeout(() => status.classList.add('hidden'), 4000);
+                }
+                alert(`Single Market ${mId} Result Updated for ${d}-${m}-${y}! 🚀`);
+            });
+        }
+
+        function restoreRealPrimaryData() {
+            const septemberData = {
+                "01": { DB: "58", SG: "89", FB: "45", GZ: "86", GL: "81", DS: "XX" },
+                "02": { DB: "52", SG: "54", FB: "19", GZ: "85", GL: "96", DS: "69" },
+                "03": { DB: "88", SG: "20", FB: "08", GZ: "32", GL: "77", DS: "57" },
+                "04": { DB: "18", SG: "01", FB: "02", GZ: "95", GL: "26", DS: "95" },
+                "05": { DB: "44", SG: "02", FB: "30", GZ: "68", GL: "37", DS: "59" },
+                "06": { DB: "25", SG: "",   FB: "88", GZ: "69", GL: "94", DS: "78" },
+                "07": { DB: "61", SG: "17", FB: "02", GZ: "02", GL: "10", DS: "67" },
+                "08": { DB: "84", SG: "83", FB: "71", GZ: "93", GL: "64", DS: "92" },
+                "09": { DB: "18", SG: "15", FB: "29", GZ: "93", GL: "69", DS: "54" },
+                "10": { DB: "52", SG: "12", FB: "15", GZ: "72", GL: "40", DS: "93" },
+                "11": { DB: "59", SG: "32", FB: "72", GZ: "98", GL: "34", DS: "40" },
+                "12": { DB: "81", SG: "42", FB: "65", GZ: "16", GL: "35", DS: "46" },
+                "13": { DB: "55", SG: "48", FB: "74", GZ: "47", GL: "72", DS: "02" },
+                "14": { DB: "86", SG: "34", FB: "30", GZ: "50", GL: "87", DS: "35" },
+                "15": { DB: "46", SG: "28", FB: "24", GZ: "19", GL: "83", DS: "89" },
+                "16": { DB: "68", SG: "94", FB: "21", GZ: "42", GL: "91", DS: "31" },
+                "17": { DB: "25", SG: "37", FB: "16", GZ: "85", GL: "69", DS: "90" },
+                "18": { DB: "84", SG: "38", FB: "36", GZ: "03", GL: "50", DS: "49" },
+                "19": { DB: "24", SG: "20", FB: "21", GZ: "86", GL: "07", DS: "35" },
+                "20": { DB: "47", SG: "80", FB: "84", GZ: "24", GL: "66", DS: "32" },
+                "21": { DB: "62", SG: "08", FB: "71", GZ: "70", GL: "XX", DS: "01" }
+            };
+
+            db.ref('charts/2026/09').update(septemberData).then(function() {
+                alert("Real Chart Data for 6 Markets (DB, SG, FB, GZ, GL, DS) Synced to Firebase! ✅");
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('today-val').value = '';
+            document.getElementById('yesterday-val').value = '';
+            document.getElementById('is-live').checked = false;
+            document.getElementById('show-instantly').checked = false;
+        }
+
+        let currentTheme = 'normal';
+        function updateTheme(themeName) {
+            currentTheme = themeName;
+            document.getElementById('current-theme-badge').innerText = themeName.toUpperCase() + " ACTIVE";
+            if (themeName === 'sunday') {
+                document.getElementById('lucky-num-box').classList.remove('hidden');
+            } else {
+                document.getElementById('lucky-num-box').classList.add('hidden');
+            }
+            db.ref('settings/theme').set(themeName).then(function() {
+                alert("Theme Updated to: " + themeName.toUpperCase());
+            });
+        }
+
+        function publishGlobalSettings() {
+            const settings = {
+                specialMsg: document.getElementById('special-msg-input').value,
+                marqueeText: document.getElementById('marquee-input').value,
+                luckyNum: document.getElementById('lucky-input').value || '--',
+                showLeak: document.getElementById('show-leak-toggle').checked,
+                leakText: document.getElementById('leak-msg-input').value,
+                showWa: document.getElementById('show-wa-toggle').checked,
+                showTg: document.getElementById('show-tg-toggle').checked,
+                waLink: document.getElementById('wa-link').value,
+                tgLink: document.getElementById('tg-link').value,
+                showPromo: document.getElementById('show-promo-toggle').checked,
+                promoMsg: document.getElementById('promo-msg-input').value,
+                theme: currentTheme,
+                updatedAt: Date.now()
+            };
+            db.ref('settings').update(settings).then(function() {
+                alert("Website Settings Updated Successfully! 🚀");
+            });
+        }
+
+        db.ref('settings').on('value', function(snap) {
+            const s = snap.val() || {};
+            if(s.specialMsg) document.getElementById('special-msg-input').value = s.specialMsg;
+            if(s.marqueeText) document.getElementById('marquee-input').value = s.marqueeText;
+            if(s.luckyNum) document.getElementById('lucky-input').value = s.luckyNum;
+            if(s.leakText) document.getElementById('leak-msg-input').value = s.leakText;
+            if(s.showLeak !== undefined) document.getElementById('show-leak-toggle').checked = s.showLeak;
+            if(s.showWa !== undefined) document.getElementById('show-wa-toggle').checked = s.showWa;
+            if(s.showTg !== undefined) document.getElementById('show-tg-toggle').checked = s.showTg;
+            if(s.waLink) document.getElementById('wa-link').value = s.waLink;
+            if(s.tgLink) document.getElementById('tg-link').value = s.tgLink;
+            if(s.promoMsg) document.getElementById('promo-msg-input').value = s.promoMsg;
+            if(s.showPromo !== undefined) document.getElementById('show-promo-toggle').checked = s.showPromo;
+            if(s.theme) {
+                currentTheme = s.theme;
+                document.getElementById('current-theme-badge').innerText = s.theme.toUpperCase() + " ACTIVE";
+                if(s.theme === 'sunday') document.getElementById('lucky-num-box').classList.remove('hidden');
+            }
+        });
+
+        function editResult(id, today, yesterday, live, showInstantly) {
+            document.getElementById('market-select').value = id;
+            document.getElementById('today-val').value = (today === 'XX' || today === '---') ? '' : today;
+            document.getElementById('yesterday-val').value = (yesterday === '--' || yesterday === '---') ? '' : yesterday;
+            document.getElementById('is-live').checked = live;
+            document.getElementById('show-instantly').checked = showInstantly || false;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateStatusList() {
+            db.ref('results').on('value', function(snap) {
+                const data = snap.val() || {};
+                const list = document.getElementById('current-list');
+                list.innerHTML = '';
+                for(let id in data) {
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center text-xs bg-gray-50 p-2 rounded border border-gray-100">
+                            <span class="font-bold text-gray-600">${data[id].name}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-400 font-bold">${data[id].yesterday}</span>
+                                <span class="font-black text-blue-600">${data[id].live ? 'LIVE' : data[id].today}</span>
+                                <button onclick="editResult('${id}', '${data[id].today}', '${data[id].yesterday}', ${data[id].live}, ${data[id].showInstantly || false})" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-200 transition">EDIT</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
