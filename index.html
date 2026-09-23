@@ -98,6 +98,50 @@
                 </div>
             </div>
 
+            <!-- Market Pin & Badge Tag Control -->
+            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 space-y-3">
+                <div class="grid grid-cols-2 gap-3 items-center">
+                    <div>
+                        <label class="block text-xs font-black text-indigo-800 mb-1">MARKET POSITION 🔢</label>
+                        <select id="position-select" onchange="syncPinFromPosition(this.value, 'is-pinned')" class="w-full p-2.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none">
+                            <option value="0">0 - Auto System Order</option>
+                            <option value="1">1 - Top #1 Position 👑</option>
+                            <option value="2">2 - Top #2 Position</option>
+                            <option value="3">3 - Top #3 Position</option>
+                            <option value="4">4 - Top #4 Position</option>
+                            <option value="5">5 - Top #5 Position</option>
+                            <option value="6">6 - Top #6 Position</option>
+                            <option value="7">7 - Top #7 Position</option>
+                            <option value="8">8 - Top #8 Position</option>
+                            <option value="9">9 - Top #9 Position</option>
+                            <option value="10">10 - Top #10 Position</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <label class="block text-[10px] font-black text-indigo-800 mb-1 uppercase">Pin To Top</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="is-pinned" onchange="syncPositionFromPin(this.checked, 'position-select')" class="w-5 h-5 rounded cursor-pointer">
+                            <span class="text-xs font-black text-indigo-900">PINNED 📌</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-indigo-100">
+                    <label class="block text-xs font-black text-indigo-700 mb-1">BADGE / TAG (सामने टैग लगाएँ/हटाएँ) 🏷️</label>
+                    <select id="badge-select" onchange="toggleCustomBadgeInput(this.value, 'custom-badge-text')" class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none focus:border-indigo-500">
+                        <option value="AUTO">AUTO (समय अनुसार / Default)</option>
+                        <option value="NONE">NONE (छुपाएँ / Hide Badge)</option>
+                        <option value="LIVE ⚡">LIVE ⚡ (लाल ब्लिंकिंग - Live Tag)</option>
+                        <option value="NEW ⚡">NEW ⚡ (हरा ब्लिंकिंग - New Tag)</option>
+                        <option value="NEXT ⏳">NEXT ⏳ (पीला पल्स - Next Tag)</option>
+                        <option value="HOT 🔥">HOT 🔥 (हॉट Blinking)</option>
+                        <option value="LEAK 💥">LEAK 💥 (लीक Blinking)</option>
+                        <option value="JACKPOT 💰">JACKPOT 💰 (गोल्डन Bouncing)</option>
+                        <option value="CUSTOM">CUSTOM (कस्टम लिखें...)</option>
+                    </select>
+                    <input type="text" id="custom-badge-text" placeholder="Enter custom badge text..." class="w-full p-3 mt-2 bg-white border-2 border-indigo-200 rounded-xl text-xs font-bold hidden outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
             <div class="flex gap-2">
                 <button onclick="publish()" id="btn-publish" class="flex-1 bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xl cursor-pointer">
                     SAVE & PUBLISH 🚀
@@ -217,6 +261,65 @@
                 </div>
             </div>
 
+            <!-- Dedicated Quick Market Pin & Badge Tag Controller -->
+            <div class="mt-8 pt-8 border-t border-gray-100">
+                <h3 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-4">Quick Market Position, Pin & Badge Controller 📌🏷️</h3>
+                <div class="bg-indigo-50/80 p-6 rounded-3xl border-2 border-indigo-200 space-y-4 shadow-sm">
+                    <div>
+                        <label class="block text-xs font-black text-indigo-900 mb-2 uppercase">1. Select Market To Edit Position / Badge</label>
+                        <select id="standalone-pin-market-select" onchange="loadStandalonePinBadge(this.value)" class="w-full p-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-indigo-900 outline-none focus:border-indigo-600 shadow-xs">
+                            <!-- JS Injected -->
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 bg-white p-4 rounded-2xl border border-indigo-100 shadow-xs">
+                        <div>
+                            <label class="block text-xs font-black text-indigo-900 mb-1">POSITION / RANK 🔢</label>
+                            <select id="standalone-position-select" onchange="syncPinFromPosition(this.value, 'standalone-is-pinned')" class="w-full p-2.5 bg-indigo-50 border-2 border-indigo-200 rounded-xl font-black text-xs text-indigo-900 outline-none focus:border-indigo-500">
+                                <option value="0">0 - Auto System Order</option>
+                                <option value="1">1 - Top #1 Position 👑</option>
+                                <option value="2">2 - Top #2 Position</option>
+                                <option value="3">3 - Top #3 Position</option>
+                                <option value="4">4 - Top #4 Position</option>
+                                <option value="5">5 - Top #5 Position</option>
+                                <option value="6">6 - Top #6 Position</option>
+                                <option value="7">7 - Top #7 Position</option>
+                                <option value="8">8 - Top #8 Position</option>
+                                <option value="9">9 - Top #9 Position</option>
+                                <option value="10">10 - Top #10 Position</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col justify-center items-end">
+                            <label class="block text-[10px] font-black text-indigo-700 uppercase mb-1">Pin To Top</label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="checkbox" id="standalone-is-pinned" onchange="syncPositionFromPin(this.checked, 'standalone-position-select')" class="w-5 h-5 rounded cursor-pointer">
+                                <span class="text-xs font-black text-indigo-900">PINNED 📌</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-indigo-100 space-y-2 shadow-xs">
+                        <label class="block text-xs font-black text-indigo-900 mb-1 uppercase">2. Select / Custom Badge Tag 🏷️</label>
+                        <select id="standalone-badge-select" onchange="toggleCustomBadgeInput(this.value, 'standalone-custom-badge-text')" class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none focus:border-indigo-500">
+                            <option value="AUTO">AUTO (समय अनुसार / Default)</option>
+                            <option value="NONE">NONE (छुपाएँ / Hide Badge)</option>
+                            <option value="LIVE ⚡">LIVE ⚡ (लाल ब्लिंकिंग - Live Tag)</option>
+                            <option value="NEW ⚡">NEW ⚡ (हरा ब्लिंकिंग - New Tag)</option>
+                            <option value="NEXT ⏳">NEXT ⏳ (पीला पल्स - Next Tag)</option>
+                            <option value="HOT 🔥">HOT 🔥 (हॉट Blinking)</option>
+                            <option value="LEAK 💥">LEAK 💥 (लीक Blinking)</option>
+                            <option value="JACKPOT 💰">JACKPOT 💰 (गोल्डन Bouncing)</option>
+                            <option value="CUSTOM">CUSTOM (कस्टम लिखें...)</option>
+                        </select>
+                        <input type="text" id="standalone-custom-badge-text" placeholder="Write custom badge text..." class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl text-xs font-bold hidden outline-none focus:border-indigo-500">
+                    </div>
+
+                    <button onclick="saveStandalonePinBadge()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-indigo-700 transition shadow-lg active:scale-95 cursor-pointer">
+                        UPDATE POSITION & BADGE ONLY 📌⚡
+                    </button>
+                </div>
+            </div>
+
             <!-- New: Market Time & Name Management -->
             <div class="mt-8 pt-8 border-t border-gray-100">
                 <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Market Settings ⏰</h3>
@@ -242,6 +345,31 @@
                     <div>
                         <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Result Check Time (24hr Format - e.g. 23:30)</label>
                         <input type="text" id="edit-market-restime" placeholder="HH:MM" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
+                        <div>
+                            <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Pin To Top 📌</label>
+                            <label class="flex items-center gap-2 mt-2 cursor-pointer">
+                                <input type="checkbox" id="edit-is-pinned" class="w-5 h-5 rounded">
+                                <span class="text-xs font-bold text-slate-700">Top Priority</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Badge / Tag 🏷️</label>
+                            <select id="edit-badge-select" onchange="toggleCustomBadgeInput(this.value, 'edit-custom-badge-text')" class="w-full p-2.5 bg-white border rounded-xl font-bold text-xs text-slate-800 outline-none">
+                                <option value="AUTO">AUTO (Default)</option>
+                                <option value="NONE">NONE (Hide)</option>
+                                <option value="LIVE ⚡">LIVE ⚡</option>
+                                <option value="NEW ⚡">NEW ⚡</option>
+                                <option value="NEXT ⏳">NEXT ⏳</option>
+                                <option value="HOT 🔥">HOT 🔥</option>
+                                <option value="LEAK 💥">LEAK 💥</option>
+                                <option value="JACKPOT 💰">JACKPOT 💰</option>
+                                <option value="CUSTOM">CUSTOM...</option>
+                            </select>
+                            <input type="text" id="edit-custom-badge-text" placeholder="Custom Tag..." class="w-full p-2.5 mt-2 bg-white border rounded-xl text-xs font-bold hidden outline-none">
+                        </div>
                     </div>
 
                     <button onclick="saveMarketSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-lg active:scale-95">
@@ -541,9 +669,11 @@
         function updateMarketSelects(cloudMarkets) {
             const select = document.getElementById('market-select');
             const editSelect = document.getElementById('edit-market-select');
+            const standaloneSelect = document.getElementById('standalone-pin-market-select');
 
             select.innerHTML = '';
             editSelect.innerHTML = '<option value="">-- Select to Edit --</option>';
+            if (standaloneSelect) standaloneSelect.innerHTML = '<option value="">-- Select Market --</option>';
 
             const defaultList = [
                 { id: 'HK', name: 'HARYANA KING', time: '01:30 PM', resTime: '13:30' },
@@ -570,19 +700,147 @@
             marketsToUse.forEach(m => {
                 select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
                 editSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+                if (standaloneSelect) standaloneSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`;
             });
 
             loadMarketData(marketsToUse[0].id);
+            if (standaloneSelect && marketsToUse[0]) {
+                standaloneSelect.value = marketsToUse[0].id;
+                loadStandalonePinBadge(marketsToUse[0].id);
+            }
+        }
+
+        function syncPinFromPosition(posVal, pinCheckId) {
+            const pinEl = document.getElementById(pinCheckId);
+            if (!pinEl) return;
+            const p = parseInt(posVal, 10) || 0;
+            if (p > 0) {
+                pinEl.checked = true;
+            } else {
+                pinEl.checked = false;
+            }
+        }
+
+        function syncPositionFromPin(isChecked, posSelectId) {
+            const posEl = document.getElementById(posSelectId);
+            if (!posEl) return;
+            if (isChecked) {
+                if (parseInt(posEl.value, 10) === 0) {
+                    posEl.value = '1';
+                }
+            } else {
+                posEl.value = '0';
+            }
+        }
+
+        function loadStandalonePinBadge(id) {
+            if (!id) return;
+            db.ref('settings/markets/' + id).once('value', function(mSnap) {
+                const mData = mSnap.val() || {};
+                db.ref('results/' + id).once('value', function(snap) {
+                    const data = snap.val() || {};
+
+                    const posVal = mData.position !== undefined ? mData.position : (data.position || 0);
+                    const posSelect = document.getElementById('standalone-position-select');
+                    if (posSelect) posSelect.value = posVal.toString();
+
+                    const pinEl = document.getElementById('standalone-is-pinned');
+                    if (pinEl) {
+                        pinEl.checked = (posVal > 0) || (mData.isPinned !== undefined ? mData.isPinned : (data.isPinned || false));
+                    }
+
+                    const bSelect = document.getElementById('standalone-badge-select');
+                    const cInput = document.getElementById('standalone-custom-badge-text');
+                    const badgeVal = mData.badge || data.badge || 'AUTO';
+
+                    if (bSelect) {
+                        const stdOpts = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
+                        if (stdOpts.includes(badgeVal)) {
+                            bSelect.value = badgeVal;
+                            if (cInput) cInput.classList.add('hidden');
+                        } else {
+                            bSelect.value = 'CUSTOM';
+                            if (cInput) {
+                                cInput.value = badgeVal;
+                                cInput.classList.remove('hidden');
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function saveStandalonePinBadge() {
+            const id = document.getElementById('standalone-pin-market-select').value;
+            if (!id) return alert("Please select a market first!");
+
+            const posVal = document.getElementById('standalone-position-select') ? parseInt(document.getElementById('standalone-position-select').value, 10) || 0 : 0;
+            const isPinned = (posVal > 0) || (document.getElementById('standalone-is-pinned') ? document.getElementById('standalone-is-pinned').checked : false);
+            const bSelectVal = document.getElementById('standalone-badge-select') ? document.getElementById('standalone-badge-select').value : 'AUTO';
+            const cInputVal = document.getElementById('standalone-custom-badge-text') ? document.getElementById('standalone-custom-badge-text').value.trim() : '';
+
+            let finalBadge = bSelectVal;
+            if (bSelectVal === 'CUSTOM') {
+                finalBadge = cInputVal || 'CUSTOM';
+            }
+
+            const updates = {};
+            updates['settings/markets/' + id + '/position'] = posVal;
+            updates['settings/markets/' + id + '/isPinned'] = isPinned;
+            updates['settings/markets/' + id + '/badge'] = finalBadge;
+            updates['results/' + id + '/position'] = posVal;
+            updates['results/' + id + '/isPinned'] = isPinned;
+            updates['results/' + id + '/badge'] = finalBadge;
+
+            db.ref().update(updates).then(function() {
+                alert(`Market ${id} Position (${posVal > 0 ? '#' + posVal : 'Auto'}) & Badge Updated Successfully! 📌⚡`);
+                if (document.getElementById('market-select').value === id) {
+                    loadMarketData(id);
+                }
+            }).catch(function(err) {
+                alert("Firebase Error: " + err.message);
+            });
+        }
+
+        function toggleCustomBadgeInput(val, targetId) {
+            const el = document.getElementById(targetId);
+            if (!el) return;
+            if (val === 'CUSTOM') {
+                el.classList.remove('hidden');
+                el.focus();
+            } else {
+                el.classList.add('hidden');
+            }
         }
 
         function loadMarketSettings(id) {
             if(!id) return;
             db.ref('settings/markets/' + id).once('value', function(snap) {
-                const data = snap.val();
-                if(data) {
-                    document.getElementById('edit-market-name').value = data.name;
-                    document.getElementById('edit-market-time').value = data.time;
-                    document.getElementById('edit-market-restime').value = data.resTime;
+                const data = snap.val() || {};
+                document.getElementById('edit-market-name').value = data.name || '';
+                document.getElementById('edit-market-time').value = data.time || '';
+                document.getElementById('edit-market-restime').value = data.resTime || '';
+
+                if (document.getElementById('edit-is-pinned')) {
+                    document.getElementById('edit-is-pinned').checked = data.isPinned || false;
+                }
+
+                const editSelect = document.getElementById('edit-badge-select');
+                const editCustom = document.getElementById('edit-custom-badge-text');
+                const badgeVal = data.badge || 'AUTO';
+
+                if (editSelect) {
+                    const stdOpts = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
+                    if (stdOpts.includes(badgeVal)) {
+                        editSelect.value = badgeVal;
+                        if (editCustom) editCustom.classList.add('hidden');
+                    } else {
+                        editSelect.value = 'CUSTOM';
+                        if (editCustom) {
+                            editCustom.value = badgeVal;
+                            editCustom.classList.remove('hidden');
+                        }
+                    }
                 }
             });
         }
@@ -591,14 +849,31 @@
             const id = document.getElementById('edit-market-select').value;
             if(!id) return alert("Please select a market first!");
 
+            const isPinned = document.getElementById('edit-is-pinned') ? document.getElementById('edit-is-pinned').checked : false;
+            const badgeSel = document.getElementById('edit-badge-select') ? document.getElementById('edit-badge-select').value : 'AUTO';
+            const customTxt = document.getElementById('edit-custom-badge-text') ? document.getElementById('edit-custom-badge-text').value.trim() : '';
+
+            let finalBadge = badgeSel;
+            if (badgeSel === 'CUSTOM') {
+                finalBadge = customTxt || 'CUSTOM';
+            }
+
             const updatedMarket = {
                 name: document.getElementById('edit-market-name').value,
                 time: document.getElementById('edit-market-time').value,
-                resTime: document.getElementById('edit-market-restime').value
+                resTime: document.getElementById('edit-market-restime').value,
+                isPinned: isPinned,
+                badge: finalBadge
             };
 
-            db.ref('settings/markets/' + id).update(updatedMarket).then(function() {
-                alert("Market Settings Updated Successfully! 🚀");
+            const updates = {};
+            updates['settings/markets/' + id] = updatedMarket;
+            updates['results/' + id + '/isPinned'] = isPinned;
+            updates['results/' + id + '/badge'] = finalBadge;
+
+            db.ref().update(updates).then(function() {
+                alert("Market Settings, Top Pin & Badge Updated Successfully! 🚀");
+                loadMarketData(id);
             });
         }
 
@@ -622,35 +897,67 @@
                 fallbackYesterday = REAL_PRIMARY_MARKET_DATA[yestY][yestM][yestD][id] || '';
             }
 
-            db.ref(`charts/${pubY}/${pubM}/${pubD}/${id}`).once('value', function(chartSnap) {
-                const targetChartVal = chartSnap.val();
+            db.ref('settings/markets/' + id).once('value', function(mSnap) {
+                const mData = mSnap.val() || {};
 
-                db.ref(`charts/${yestY}/${yestM}/${yestD}/${id}`).once('value', function(chartYestSnap) {
-                    const chartYestVal = chartYestSnap.val();
+                db.ref(`charts/${pubY}/${pubM}/${pubD}/${id}`).once('value', function(chartSnap) {
+                    const targetChartVal = chartSnap.val();
 
-                    db.ref('results/' + id).once('value', function(snap) {
-                        const data = snap.val() || {};
-                        lastLoadedToday = data.today || 'XX';
+                    db.ref(`charts/${yestY}/${yestM}/${yestD}/${id}`).once('value', function(chartYestSnap) {
+                        const chartYestVal = chartYestSnap.val();
 
-                        const todayInput = document.getElementById('today-val');
-                        const yesterdayInput = document.getElementById('yesterday-val');
+                        db.ref('results/' + id).once('value', function(snap) {
+                            const data = snap.val() || {};
+                            lastLoadedToday = data.today || 'XX';
 
-                        if (todayInput) {
-                            const valToShow = targetChartVal || data.today;
-                            todayInput.value = (valToShow === 'XX' || valToShow === '---' || !valToShow) ? '' : valToShow;
-                        }
+                            const todayInput = document.getElementById('today-val');
+                            const yesterdayInput = document.getElementById('yesterday-val');
 
-                        // Auto-fill Yesterday's number from historical record or saved results!
-                        let finalYest = chartYestVal || (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
-                        if (yesterdayInput) {
-                            yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX') ? '' : finalYest;
-                        }
+                            if (todayInput) {
+                                const valToShow = targetChartVal || data.today;
+                                todayInput.value = (valToShow === 'XX' || valToShow === '---' || !valToShow) ? '' : valToShow;
+                            }
 
-                        const isLive = document.getElementById('is-live');
-                        if (isLive) isLive.checked = data.live || false;
+                            // Auto-fill Yesterday's number from historical record or saved results!
+                            let finalYest = chartYestVal || (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
+                            if (yesterdayInput) {
+                                yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX') ? '' : finalYest;
+                            }
 
-                        const showInstantly = document.getElementById('show-instantly');
-                        if (showInstantly) showInstantly.checked = data.showInstantly || false;
+                            const isLive = document.getElementById('is-live');
+                            if (isLive) isLive.checked = data.live || false;
+
+                            const showInstantly = document.getElementById('show-instantly');
+                            if (showInstantly) showInstantly.checked = data.showInstantly || false;
+
+                            // Load Position & Pin & Badge Tag Settings
+                            const posVal = mData.position !== undefined ? mData.position : (data.position || 0);
+                            const posSelect = document.getElementById('position-select');
+                            if (posSelect) posSelect.value = posVal.toString();
+
+                            const isPinnedEl = document.getElementById('is-pinned');
+                            if (isPinnedEl) {
+                                isPinnedEl.checked = (posVal > 0) || (mData.isPinned !== undefined ? mData.isPinned : (data.isPinned || false));
+                            }
+
+                            const badgeSelect = document.getElementById('badge-select');
+                            const customInput = document.getElementById('custom-badge-text');
+                            const badgeVal = mData.badge || data.badge || 'AUTO';
+
+                            if (badgeSelect) {
+                                const stdOpts = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
+                                if (stdOpts.includes(badgeVal)) {
+                                    badgeSelect.value = badgeVal;
+                                    if (customInput) customInput.classList.add('hidden');
+                                } else {
+                                    badgeSelect.value = 'CUSTOM';
+                                    if (customInput) {
+                                        customInput.value = badgeVal;
+                                        customInput.classList.remove('hidden');
+                                    }
+                                }
+                            }
+                        });
                     });
                 });
             });
@@ -675,6 +982,16 @@
             const yesterdayVal = document.getElementById('yesterday-val').value.trim() || '--';
             const isLive = document.getElementById('is-live').checked;
 
+            const posVal = document.getElementById('position-select') ? parseInt(document.getElementById('position-select').value, 10) || 0 : 0;
+            const isPinned = (posVal > 0) || (document.getElementById('is-pinned') ? document.getElementById('is-pinned').checked : false);
+            const badgeSel = document.getElementById('badge-select') ? document.getElementById('badge-select').value : 'AUTO';
+            const customTxt = document.getElementById('custom-badge-text') ? document.getElementById('custom-badge-text').value.trim() : '';
+
+            let finalBadge = badgeSel;
+            if (badgeSel === 'CUSTOM') {
+                finalBadge = customTxt || 'CUSTOM';
+            }
+
             const todayIST = SattaDateEngine.getTodayIST();
             const yestIST = SattaDateEngine.getYesterdayIST();
 
@@ -692,12 +1009,18 @@
                 yesterday: yesterdayVal,
                 live: isLive,
                 showInstantly: document.getElementById('show-instantly').checked,
+                position: posVal,
+                isPinned: isPinned,
+                badge: finalBadge,
                 updatedAt: Date.now()
             };
 
             // Atomic 1-click update: Syncs live result card AND monthly chart table simultaneously!
             const updates = {};
             updates['results/' + id] = newData;
+            updates['settings/markets/' + id + '/position'] = posVal;
+            updates['settings/markets/' + id + '/isPinned'] = isPinned;
+            updates['settings/markets/' + id + '/badge'] = finalBadge;
 
             if (todayVal && todayVal !== 'XX') {
                 updates[`charts/${pubY}/${pubM}/${pubD}/${id}`] = todayVal;
@@ -870,6 +1193,13 @@
             document.getElementById('yesterday-val').value = '';
             document.getElementById('is-live').checked = false;
             document.getElementById('show-instantly').checked = false;
+            if (document.getElementById('position-select')) document.getElementById('position-select').value = '0';
+            if (document.getElementById('is-pinned')) document.getElementById('is-pinned').checked = false;
+            if (document.getElementById('badge-select')) document.getElementById('badge-select').value = 'AUTO';
+            if (document.getElementById('custom-badge-text')) {
+                document.getElementById('custom-badge-text').value = '';
+                document.getElementById('custom-badge-text').classList.add('hidden');
+            }
         }
 
         let currentTheme = 'normal';
@@ -927,12 +1257,9 @@
             }
         });
 
-        function editResult(id, today, yesterday, live, showInstantly) {
+        function editResult(id) {
             document.getElementById('market-select').value = id;
-            document.getElementById('today-val').value = (today === 'XX' || today === '---') ? '' : today;
-            document.getElementById('yesterday-val').value = (yesterday === '--' || yesterday === '---') ? '' : yesterday;
-            document.getElementById('is-live').checked = live;
-            document.getElementById('show-instantly').checked = showInstantly || false;
+            loadMarketData(id);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -940,15 +1267,18 @@
             db.ref('results').on('value', function(snap) {
                 const data = snap.val() || {};
                 const list = document.getElementById('current-list');
+                if (!list) return;
                 list.innerHTML = '';
                 for(let id in data) {
+                    const posBadge = (data[id].position && data[id].position > 0) ? `<span class="bg-indigo-700 text-white text-[9px] px-1.5 py-0.5 rounded font-black mr-1">#${data[id].position}</span>` : (data[id].isPinned ? '📌 ' : '');
+                    const bTag = data[id].badge && data[id].badge !== 'AUTO' ? ` <span class="bg-blue-100 text-blue-700 text-[9px] px-1.5 py-0.5 rounded font-bold">${data[id].badge}</span>` : '';
                     list.innerHTML += `
                         <div class="flex justify-between items-center text-xs bg-gray-50 p-2 rounded border border-gray-100">
-                            <span class="font-bold text-gray-600">${data[id].name}</span>
+                            <span class="font-bold text-gray-600">${posBadge}${data[id].name}${bTag}</span>
                             <div class="flex items-center gap-3">
                                 <span class="text-gray-400 font-bold">${data[id].yesterday}</span>
                                 <span class="font-black text-blue-600">${data[id].live ? 'LIVE' : data[id].today}</span>
-                                <button onclick="editResult('${id}', '${data[id].today}', '${data[id].yesterday}', ${data[id].live}, ${data[id].showInstantly || false})" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-200 transition">EDIT</button>
+                                <button onclick="editResult('${id}')" class="bg-blue-100 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-200 transition">EDIT</button>
                             </div>
                         </div>
                     `;
