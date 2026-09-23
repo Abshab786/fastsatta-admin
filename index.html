@@ -45,6 +45,32 @@
                 </select>
             </div>
 
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1">Target Result Date (Late Night / Custom Date Upload)</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="pub-year" onchange="loadMarketData(document.getElementById('market-select').value)" class="p-3 bg-gray-50 border-2 rounded-xl font-bold text-xs outline-none focus:border-blue-500">
+                        <!-- JS Populated -->
+                    </select>
+                    <select id="pub-month" onchange="loadMarketData(document.getElementById('market-select').value)" class="p-3 bg-gray-50 border-2 rounded-xl font-bold text-xs outline-none focus:border-blue-500">
+                        <option value="09">September</option>
+                        <option value="08">August</option>
+                        <option value="07">July</option>
+                        <option value="06">June</option>
+                        <option value="05">May</option>
+                        <option value="04">April</option>
+                        <option value="03">March</option>
+                        <option value="02">February</option>
+                        <option value="01">January</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <select id="pub-day" onchange="loadMarketData(document.getElementById('market-select').value)" class="p-3 bg-gray-50 border-2 rounded-xl font-bold text-xs outline-none focus:border-blue-500">
+                        <!-- JS Populated 01-31 -->
+                    </select>
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-1">Today's Number</label>
@@ -449,42 +475,50 @@
                 });
             }
 
-            // Dynamically populate Year select in Admin Panel
+            // Dynamically populate Year & Target Date selects in Admin Panel
             const chartYearSelect = document.getElementById('chart-year');
-            const singleYearSelect = document.getElementById('single-edit-year');
-            const curY = new Date().getFullYear();
-            const curM = (new Date().getMonth() + 1).toString().padStart(2, '0');
-            const curD = new Date().getDate().toString().padStart(2, '0');
+            const pubYearSelect = document.getElementById('pub-year');
+            const pubMonthSelect = document.getElementById('pub-month');
+            const pubDaySelect = document.getElementById('pub-day');
+
+            const todayIST = SattaDateEngine.getTodayIST();
 
             if (chartYearSelect) {
                 chartYearSelect.innerHTML = '';
-                for (let y = curY; y >= 2016; y--) {
+                for (let y = parseInt(todayIST.yearStr, 10); y >= 2016; y--) {
                     chartYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
                 }
-                chartYearSelect.value = curY.toString();
+                chartYearSelect.value = todayIST.yearStr;
             }
 
-            if (singleYearSelect) {
-                singleYearSelect.innerHTML = '';
-                for (let y = curY; y >= 2016; y--) {
-                    singleYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+            if (pubYearSelect) {
+                pubYearSelect.innerHTML = '';
+                for (let y = parseInt(todayIST.yearStr, 10); y >= 2016; y--) {
+                    pubYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
                 }
-                singleYearSelect.value = curY.toString();
+                pubYearSelect.value = todayIST.yearStr;
+            }
+
+            if (pubMonthSelect) {
+                pubMonthSelect.value = todayIST.monthStr;
+            }
+
+            if (pubDaySelect) {
+                pubDaySelect.innerHTML = '';
+                for (let i = 1; i <= 31; i++) {
+                    const val = i.toString().padStart(2, '0');
+                    pubDaySelect.innerHTML += `<option value="${val}">${val}</option>`;
+                }
+                pubDaySelect.value = todayIST.dayStr;
             }
 
             const chartMonthSelect = document.getElementById('chart-month');
             if (chartMonthSelect) {
-                chartMonthSelect.value = curM;
-            }
-
-            const singleMonthSelect = document.getElementById('single-edit-month');
-            if (singleMonthSelect) {
-                singleMonthSelect.value = curM;
+                chartMonthSelect.value = todayIST.monthStr;
             }
 
             // Populate Day select 1-31
             const daySelect = document.getElementById('chart-day');
-            const singleDaySelect = document.getElementById('single-edit-day');
 
             if (daySelect) {
                 daySelect.innerHTML = '';
@@ -492,16 +526,7 @@
                     const val = i.toString().padStart(2, '0');
                     daySelect.innerHTML += `<option value="${val}">${val}</option>`;
                 }
-                daySelect.value = curD;
-            }
-
-            if (singleDaySelect) {
-                singleDaySelect.innerHTML = '';
-                for(let i=1; i<=31; i++) {
-                    const val = i.toString().padStart(2, '0');
-                    singleDaySelect.innerHTML += `<option value="${val}">${val}</option>`;
-                }
-                singleDaySelect.value = curD;
+                daySelect.value = todayIST.dayStr;
             }
 
             daySelect.addEventListener('change', loadExistingChartData);
@@ -582,42 +607,51 @@
         function loadMarketData(id) {
             if (!id) return;
 
+            const pubY = document.getElementById('pub-year') ? document.getElementById('pub-year').value : SattaDateEngine.getTodayIST().yearStr;
+            const pubM = document.getElementById('pub-month') ? document.getElementById('pub-month').value : SattaDateEngine.getTodayIST().monthStr;
+            const pubD = document.getElementById('pub-day') ? document.getElementById('pub-day').value : SattaDateEngine.getTodayIST().dayStr;
+
             const yestIST = SattaDateEngine.getYesterdayIST();
             const yestY = yestIST.yearStr;
             const yestM = yestIST.monthStr;
             const yestD = yestIST.dayStr;
 
-            // Fetch yesterday's exact historical chart record for this market
+            // Fetch target date chart value & yesterday's exact historical chart record for this market
             let fallbackYesterday = '';
             if (typeof REAL_PRIMARY_MARKET_DATA !== 'undefined' && REAL_PRIMARY_MARKET_DATA[yestY] && REAL_PRIMARY_MARKET_DATA[yestY][yestM] && REAL_PRIMARY_MARKET_DATA[yestY][yestM][yestD]) {
                 fallbackYesterday = REAL_PRIMARY_MARKET_DATA[yestY][yestM][yestD][id] || '';
             }
 
-            db.ref(`charts/${yestY}/${yestM}/${yestD}/${id}`).once('value', function(chartSnap) {
-                const chartYestVal = chartSnap.val();
+            db.ref(`charts/${pubY}/${pubM}/${pubD}/${id}`).once('value', function(chartSnap) {
+                const targetChartVal = chartSnap.val();
 
-                db.ref('results/' + id).once('value', function(snap) {
-                    const data = snap.val() || {};
-                    lastLoadedToday = data.today || 'XX';
+                db.ref(`charts/${yestY}/${yestM}/${yestD}/${id}`).once('value', function(chartYestSnap) {
+                    const chartYestVal = chartYestSnap.val();
 
-                    const todayInput = document.getElementById('today-val');
-                    const yesterdayInput = document.getElementById('yesterday-val');
+                    db.ref('results/' + id).once('value', function(snap) {
+                        const data = snap.val() || {};
+                        lastLoadedToday = data.today || 'XX';
 
-                    if (todayInput) {
-                        todayInput.value = (data.today === 'XX' || data.today === '---') ? '' : data.today;
-                    }
+                        const todayInput = document.getElementById('today-val');
+                        const yesterdayInput = document.getElementById('yesterday-val');
 
-                    // Auto-fill Yesterday's number from historical record or saved results!
-                    let finalYest = chartYestVal || (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
-                    if (yesterdayInput) {
-                        yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX') ? '' : finalYest;
-                    }
+                        if (todayInput) {
+                            const valToShow = targetChartVal || data.today;
+                            todayInput.value = (valToShow === 'XX' || valToShow === '---' || !valToShow) ? '' : valToShow;
+                        }
 
-                    const isLive = document.getElementById('is-live');
-                    if (isLive) isLive.checked = data.live || false;
+                        // Auto-fill Yesterday's number from historical record or saved results!
+                        let finalYest = chartYestVal || (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
+                        if (yesterdayInput) {
+                            yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX') ? '' : finalYest;
+                        }
 
-                    const showInstantly = document.getElementById('show-instantly');
-                    if (showInstantly) showInstantly.checked = data.showInstantly || false;
+                        const isLive = document.getElementById('is-live');
+                        if (isLive) isLive.checked = data.live || false;
+
+                        const showInstantly = document.getElementById('show-instantly');
+                        if (showInstantly) showInstantly.checked = data.showInstantly || false;
+                    });
                 });
             });
         }
@@ -644,9 +678,9 @@
             const todayIST = SattaDateEngine.getTodayIST();
             const yestIST = SattaDateEngine.getYesterdayIST();
 
-            const curY = todayIST.yearStr;
-            const curM = todayIST.monthStr;
-            const curD = todayIST.dayStr;
+            const pubY = document.getElementById('pub-year') ? document.getElementById('pub-year').value : todayIST.yearStr;
+            const pubM = document.getElementById('pub-month') ? document.getElementById('pub-month').value : todayIST.monthStr;
+            const pubD = document.getElementById('pub-day') ? document.getElementById('pub-day').value : todayIST.dayStr;
 
             const yestY = yestIST.yearStr;
             const yestM = yestIST.monthStr;
@@ -666,7 +700,7 @@
             updates['results/' + id] = newData;
 
             if (todayVal && todayVal !== 'XX') {
-                updates[`charts/${curY}/${curM}/${curD}/${id}`] = todayVal;
+                updates[`charts/${pubY}/${pubM}/${pubD}/${id}`] = todayVal;
             }
 
             if (yesterdayVal && yesterdayVal !== '--' && yesterdayVal !== '---') {
@@ -675,7 +709,7 @@
 
             db.ref().update(updates).then(function() {
                 const status = document.getElementById('status');
-                status.innerText = "✅ Result & Monthly Chart Updated Live! 🚀";
+                status.innerText = `✅ Result for Date ${pubD}-${pubM}-${pubY} Updated Live! 🚀`;
                 status.classList.remove('hidden');
 
                 btn.disabled = false;
