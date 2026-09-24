@@ -16,7 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
 </head>
-<body class="bg-slate-900 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-900 min-h-screen flex items-center justify-center p-3 sm:p-6">
 
     <!-- Login Layer -->
     <div id="login-layer" class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-2xl">
@@ -27,26 +27,116 @@
     </div>
 
     <!-- Dashboard Layer -->
-    <div id="admin-layer" class="w-full max-w-md bg-white p-6 rounded-2xl shadow-2xl hidden">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl font-black text-blue-700 uppercase">Master Control</h1>
-            <button onclick="localStorage.removeItem('admin_logged_in'); location.href='admin-panel.html';" class="text-xs font-bold text-gray-400 underline cursor-pointer">LOGOUT</button>
+    <div id="admin-layer" class="w-full max-w-2xl bg-white p-5 sm:p-8 rounded-3xl shadow-2xl hidden">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+            <div class="flex items-center gap-3">
+                <button id="btn-back-home" onclick="showCategory('home')" class="hidden bg-blue-50 text-blue-700 px-3.5 py-2 rounded-xl font-black text-xs hover:bg-blue-100 transition cursor-pointer flex items-center gap-1">
+                    <span>⬅️</span> <span>Home</span>
+                </button>
+                <h1 id="category-title" class="text-base sm:text-xl font-black text-blue-900 uppercase tracking-wide">Master Control Dashboard</h1>
+            </div>
+            <button onclick="localStorage.removeItem('admin_logged_in'); location.href='admin-panel.html';" class="text-xs font-bold text-red-500 hover:text-red-700 underline cursor-pointer">LOGOUT</button>
         </div>
 
-        <div class="space-y-6">
-            <div class="bg-blue-50 p-3 rounded-lg text-[10px] font-bold text-blue-600 border border-blue-100">
-                INFO: Changes made here will reflect globally in real-time.
+        <div id="status" class="text-center p-3 mb-4 rounded-xl bg-green-100 text-green-700 font-bold hidden shadow-sm">
+            ✅ Updated on Website!
+        </div>
+
+        <!-- 1. Admin Home / Dashboard Navigation View -->
+        <div id="admin-home-view" class="space-y-6">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-5 rounded-2xl text-white shadow-md">
+                <div class="text-xs font-black uppercase tracking-widest text-blue-200">Welcome Admin ( AB SHAB )</div>
+                <div class="text-xl font-black mt-0.5">Select Control Category</div>
+                <div class="text-xs text-blue-100 font-bold mt-1">Changes made in any category reflect globally on website in real-time.</div>
             </div>
 
+            <!-- 5 Category Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <!-- Card 1: Result Publisher -->
+                <div onclick="showCategory('publish')" class="bg-blue-50/80 p-5 rounded-2xl border-2 border-blue-200 hover:border-blue-600 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">🚀</span>
+                        <div>
+                            <div class="text-base font-black text-blue-950">Result Publisher</div>
+                            <div class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">दैनिक परिणाम पब्लिशर</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 font-medium">Publish today & yesterday result numbers, live status & instant show.</p>
+                </div>
+
+                <!-- Card 2: Position & Badges -->
+                <div onclick="showCategory('order')" class="bg-indigo-50/80 p-5 rounded-2xl border-2 border-indigo-200 hover:border-indigo-600 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">📌</span>
+                        <div>
+                            <div class="text-base font-black text-indigo-950">Position & Badges</div>
+                            <div class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">मार्केट क्रम व बैज</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 font-medium">Set market rank (1-10), pin to top priority & custom badge tags.</p>
+                </div>
+
+                <!-- Card 3: Themes & Notices -->
+                <div onclick="showCategory('theme')" class="bg-emerald-50/80 p-5 rounded-2xl border-2 border-emerald-200 hover:border-emerald-600 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">⚡</span>
+                        <div>
+                            <div class="text-base font-black text-emerald-950">Themes & Notices</div>
+                            <div class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">थीम, अलर्ट व लिंक्स</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 font-medium">Set site theme, top alert banner, marquee notice & WA/TG links.</p>
+                </div>
+
+                <!-- Card 4: Market Time & Names -->
+                <div onclick="showCategory('market')" class="bg-amber-50/80 p-5 rounded-2xl border-2 border-amber-200 hover:border-amber-600 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">⏰</span>
+                        <div>
+                            <div class="text-base font-black text-amber-950">Market Time & Names</div>
+                            <div class="text-[10px] font-bold text-amber-700 uppercase tracking-wider">मार्केट टाइम व नाम</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 font-medium">Edit market display name, timing and 24hr result check time.</p>
+                </div>
+
+                <!-- Card 5: Monthly Chart Record -->
+                <div onclick="showCategory('chart')" class="bg-purple-50/80 p-5 rounded-2xl border-2 border-purple-200 hover:border-purple-600 hover:shadow-xl transition-all cursor-pointer sm:col-span-2 flex flex-col justify-between group">
+                    <div class="flex items-center gap-3 mb-1">
+                        <span class="text-3xl group-hover:scale-110 transition-transform">📊</span>
+                        <div>
+                            <div class="text-base font-black text-purple-950">Monthly Chart Manager</div>
+                            <div class="text-[10px] font-bold text-purple-600 uppercase tracking-wider">मंथली रिकॉर्ड चार्ट</div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 font-medium">View and edit historical record chart entries for all markets.</p>
+                </div>
+            </div>
+
+            <!-- Live Status Monitor Widget on Admin Home -->
+            <div class="mt-6 border-t pt-4">
+                <h3 class="font-black text-gray-500 text-xs mb-3 uppercase tracking-widest flex items-center justify-between">
+                    <span>Current Live Data:</span>
+                    <span class="text-[9px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">REALTIME SYNC</span>
+                </h3>
+                <div id="current-list" class="space-y-2 max-h-56 overflow-y-auto pr-2">
+                    <!-- Status items -->
+                </div>
+                <button onclick="if(confirm('Delete all global results?')) { db.ref('results').remove(); }" class="mt-4 w-full text-[10px] font-bold text-gray-300 hover:text-red-500 transition uppercase tracking-widest cursor-pointer">Reset Full Global Data</button>
+            </div>
+        </div>
+
+        <!-- Section 1: Publish Daily Result -->
+        <div id="cat-section-publish" class="space-y-6 hidden">
             <div>
-                <label class="block text-sm font-bold text-gray-600 mb-1">1. Select Market</label>
+                <label class="block text-sm font-bold text-gray-700 mb-1">1. Select Market</label>
                 <select id="market-select" onchange="loadMarketData(this.value)" class="w-full p-4 bg-gray-50 border-2 rounded-xl font-bold outline-none focus:border-blue-500 appearance-none">
                     <!-- JS Injected -->
                 </select>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-500 mb-1">Target Result Date (Late Night / Custom Date Upload)</label>
+                <label class="block text-xs font-bold text-gray-600 mb-1">Target Result Date (Late Night / Custom Date Upload)</label>
                 <div class="grid grid-cols-3 gap-2">
                     <select id="pub-year" onchange="loadMarketData(document.getElementById('market-select').value)" class="p-3 bg-gray-50 border-2 rounded-xl font-bold text-xs outline-none focus:border-blue-500">
                         <!-- JS Populated -->
@@ -73,12 +163,12 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Today's Number</label>
-                    <input type="text" id="today-val" maxlength="2" placeholder="XX" class="w-full p-4 text-3xl text-center font-black bg-blue-50 text-blue-800 border-2 border-blue-100 rounded-xl outline-none focus:border-blue-500">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Today's Number</label>
+                    <input type="text" id="today-val" maxlength="2" placeholder="XX" class="w-full p-4 text-3xl text-center font-black bg-blue-50 text-blue-900 border-2 border-blue-200 rounded-xl outline-none focus:border-blue-600">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Yesterday's</label>
-                    <input type="text" id="yesterday-val" maxlength="2" placeholder="--" class="w-full p-4 text-3xl text-center font-black bg-gray-50 text-gray-400 border-2 border-gray-100 rounded-xl outline-none focus:border-blue-500">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Yesterday's</label>
+                    <input type="text" id="yesterday-val" maxlength="2" placeholder="--" class="w-full p-4 text-3xl text-center font-black bg-gray-50 text-gray-500 border-2 border-gray-200 rounded-xl outline-none focus:border-blue-600">
                 </div>
             </div>
 
@@ -148,11 +238,71 @@
                 </button>
                 <button onclick="resetForm()" class="bg-gray-100 text-gray-500 px-6 rounded-2xl font-bold hover:bg-gray-200 transition text-xs uppercase cursor-pointer">Reset</button>
             </div>
+        </div>
 
-            <!-- New: Global Site Theme & Events -->
-            <div class="mt-8 pt-8 border-t border-gray-100">
+        <!-- Section 2: Market Position & Badges -->
+        <div id="cat-section-order" class="space-y-6 hidden">
+            <div class="bg-indigo-50/80 p-6 rounded-3xl border-2 border-indigo-200 space-y-4 shadow-sm">
+                <div>
+                    <label class="block text-xs font-black text-indigo-900 mb-2 uppercase">1. Select Market To Edit Position / Badge</label>
+                    <select id="standalone-pin-market-select" onchange="loadStandalonePinBadge(this.value)" class="w-full p-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-indigo-900 outline-none focus:border-indigo-600 shadow-xs">
+                        <!-- JS Injected -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 bg-white p-4 rounded-2xl border border-indigo-100 shadow-xs">
+                    <div>
+                        <label class="block text-xs font-black text-indigo-900 mb-1">POSITION / RANK 🔢</label>
+                        <select id="standalone-position-select" onchange="syncPinFromPosition(this.value, 'standalone-is-pinned')" class="w-full p-2.5 bg-indigo-50 border-2 border-indigo-200 rounded-xl font-black text-xs text-indigo-900 outline-none focus:border-indigo-500">
+                            <option value="0">0 - Auto System Order</option>
+                            <option value="1">1 - Top #1 Position 👑</option>
+                            <option value="2">2 - Top #2 Position</option>
+                            <option value="3">3 - Top #3 Position</option>
+                            <option value="4">4 - Top #4 Position</option>
+                            <option value="5">5 - Top #5 Position</option>
+                            <option value="6">6 - Top #6 Position</option>
+                            <option value="7">7 - Top #7 Position</option>
+                            <option value="8">8 - Top #8 Position</option>
+                            <option value="9">9 - Top #9 Position</option>
+                            <option value="10">10 - Top #10 Position</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col justify-center items-end">
+                        <label class="block text-[10px] font-black text-indigo-700 uppercase mb-1">Pin To Top</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="standalone-is-pinned" onchange="syncPositionFromPin(this.checked, 'standalone-position-select')" class="w-5 h-5 rounded cursor-pointer">
+                            <span class="text-xs font-black text-indigo-900">PINNED 📌</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-indigo-100 space-y-2 shadow-xs">
+                    <label class="block text-xs font-black text-indigo-900 mb-1 uppercase">2. Select / Custom Badge Tag 🏷️</label>
+                    <select id="standalone-badge-select" onchange="toggleCustomBadgeInput(this.value, 'standalone-custom-badge-text')" class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none focus:border-indigo-500">
+                        <option value="AUTO">AUTO (समय अनुसार / Default)</option>
+                        <option value="NONE">NONE (छुपाएँ / Hide Badge)</option>
+                        <option value="LIVE ⚡">LIVE ⚡ (लाल ब्लिंकिंग - Live Tag)</option>
+                        <option value="NEW ⚡">NEW ⚡ (हरा ब्लिंकिंग - New Tag)</option>
+                        <option value="NEXT ⏳">NEXT ⏳ (पीला पल्स - Next Tag)</option>
+                        <option value="HOT 🔥">HOT 🔥 (हॉट Blinking)</option>
+                        <option value="LEAK 💥">LEAK 💥 (लीक Blinking)</option>
+                        <option value="JACKPOT 💰">JACKPOT 💰 (गोल्डन Bouncing)</option>
+                        <option value="CUSTOM">CUSTOM (कस्टम लिखें...)</option>
+                    </select>
+                    <input type="text" id="standalone-custom-badge-text" placeholder="Write custom badge text..." class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl text-xs font-bold hidden outline-none focus:border-indigo-500">
+                </div>
+
+                <button onclick="saveStandalonePinBadge()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-indigo-700 transition shadow-lg active:scale-95 cursor-pointer">
+                    UPDATE POSITION & BADGE ONLY 📌⚡
+                </button>
+            </div>
+        </div>
+
+        <!-- Section 3: Themes & Notices -->
+        <div id="cat-section-theme" class="space-y-6 hidden">
+            <div>
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest">Master Controls</h3>
+                    <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest">Master Themes</h3>
                     <span id="current-theme-badge" class="bg-blue-100 text-blue-600 text-[10px] px-2 py-1 rounded font-black uppercase">Normal Theme</span>
                 </div>
 
@@ -255,229 +405,197 @@
                         <textarea id="promo-msg-input" placeholder="Enter popup message..." class="w-full p-3 bg-white border-2 border-slate-100 rounded-xl text-sm font-bold focus:border-blue-500 outline-none h-20"></textarea>
                     </div>
 
-                    <button onclick="publishGlobalSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-xl active:scale-95">
+                    <button onclick="publishGlobalSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-xl active:scale-95 cursor-pointer">
                         Update Website Now ⚡
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Dedicated Quick Market Pin & Badge Tag Controller -->
-            <div class="mt-8 pt-8 border-t border-gray-100">
-                <h3 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-4">Quick Market Position, Pin & Badge Controller 📌🏷️</h3>
-                <div class="bg-indigo-50/80 p-6 rounded-3xl border-2 border-indigo-200 space-y-4 shadow-sm">
-                    <div>
-                        <label class="block text-xs font-black text-indigo-900 mb-2 uppercase">1. Select Market To Edit Position / Badge</label>
-                        <select id="standalone-pin-market-select" onchange="loadStandalonePinBadge(this.value)" class="w-full p-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-indigo-900 outline-none focus:border-indigo-600 shadow-xs">
-                            <!-- JS Injected -->
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 bg-white p-4 rounded-2xl border border-indigo-100 shadow-xs">
-                        <div>
-                            <label class="block text-xs font-black text-indigo-900 mb-1">POSITION / RANK 🔢</label>
-                            <select id="standalone-position-select" onchange="syncPinFromPosition(this.value, 'standalone-is-pinned')" class="w-full p-2.5 bg-indigo-50 border-2 border-indigo-200 rounded-xl font-black text-xs text-indigo-900 outline-none focus:border-indigo-500">
-                                <option value="0">0 - Auto System Order</option>
-                                <option value="1">1 - Top #1 Position 👑</option>
-                                <option value="2">2 - Top #2 Position</option>
-                                <option value="3">3 - Top #3 Position</option>
-                                <option value="4">4 - Top #4 Position</option>
-                                <option value="5">5 - Top #5 Position</option>
-                                <option value="6">6 - Top #6 Position</option>
-                                <option value="7">7 - Top #7 Position</option>
-                                <option value="8">8 - Top #8 Position</option>
-                                <option value="9">9 - Top #9 Position</option>
-                                <option value="10">10 - Top #10 Position</option>
-                            </select>
-                        </div>
-                        <div class="flex flex-col justify-center items-end">
-                            <label class="block text-[10px] font-black text-indigo-700 uppercase mb-1">Pin To Top</label>
-                            <label class="flex items-center gap-1.5 cursor-pointer">
-                                <input type="checkbox" id="standalone-is-pinned" onchange="syncPositionFromPin(this.checked, 'standalone-position-select')" class="w-5 h-5 rounded cursor-pointer">
-                                <span class="text-xs font-black text-indigo-900">PINNED 📌</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-2xl border border-indigo-100 space-y-2 shadow-xs">
-                        <label class="block text-xs font-black text-indigo-900 mb-1 uppercase">2. Select / Custom Badge Tag 🏷️</label>
-                        <select id="standalone-badge-select" onchange="toggleCustomBadgeInput(this.value, 'standalone-custom-badge-text')" class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none focus:border-indigo-500">
-                            <option value="AUTO">AUTO (समय अनुसार / Default)</option>
-                            <option value="NONE">NONE (छुपाएँ / Hide Badge)</option>
-                            <option value="LIVE ⚡">LIVE ⚡ (लाल ब्लिंकिंग - Live Tag)</option>
-                            <option value="NEW ⚡">NEW ⚡ (हरा ब्लिंकिंग - New Tag)</option>
-                            <option value="NEXT ⏳">NEXT ⏳ (पीला पल्स - Next Tag)</option>
-                            <option value="HOT 🔥">HOT 🔥 (हॉट Blinking)</option>
-                            <option value="LEAK 💥">LEAK 💥 (लीक Blinking)</option>
-                            <option value="JACKPOT 💰">JACKPOT 💰 (गोल्डन Bouncing)</option>
-                            <option value="CUSTOM">CUSTOM (कस्टम लिखें...)</option>
-                        </select>
-                        <input type="text" id="standalone-custom-badge-text" placeholder="Write custom badge text..." class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl text-xs font-bold hidden outline-none focus:border-indigo-500">
-                    </div>
-
-                    <button onclick="saveStandalonePinBadge()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-indigo-700 transition shadow-lg active:scale-95 cursor-pointer">
-                        UPDATE POSITION & BADGE ONLY 📌⚡
-                    </button>
+        <!-- Section 4: Market Time & Names -->
+        <div id="cat-section-market" class="space-y-6 hidden">
+            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 mb-2 uppercase">1. Select Market to Edit</label>
+                    <select id="edit-market-select" onchange="loadMarketSettings(this.value)" class="w-full p-3 bg-white border rounded-xl font-bold outline-none focus:border-blue-500">
+                        <!-- JS Injected -->
+                    </select>
                 </div>
-            </div>
 
-            <!-- New: Market Time & Name Management -->
-            <div class="mt-8 pt-8 border-t border-gray-100">
-                <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Market Settings ⏰</h3>
-                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[10px] font-black text-gray-400 mb-2 uppercase">1. Select Market to Edit</label>
-                        <select id="edit-market-select" onchange="loadMarketSettings(this.value)" class="w-full p-3 bg-white border rounded-xl font-bold outline-none focus:border-blue-500">
-                            <!-- JS Injected -->
-                        </select>
+                        <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Market Name</label>
+                        <input type="text" id="edit-market-name" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
                     </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Market Name</label>
-                            <input type="text" id="edit-market-name" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Display Time (e.g. 11:30 PM)</label>
-                            <input type="text" id="edit-market-time" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
-                        </div>
-                    </div>
-
                     <div>
-                        <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Result Check Time (24hr Format - e.g. 23:30)</label>
-                        <input type="text" id="edit-market-restime" placeholder="HH:MM" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
+                        <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Display Time (e.g. 11:30 PM)</label>
+                        <input type="text" id="edit-market-time" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
                     </div>
-
-                    <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
-                        <div>
-                            <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Pin To Top 📌</label>
-                            <label class="flex items-center gap-2 mt-2 cursor-pointer">
-                                <input type="checkbox" id="edit-is-pinned" class="w-5 h-5 rounded">
-                                <span class="text-xs font-bold text-slate-700">Top Priority</span>
-                            </label>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Badge / Tag 🏷️</label>
-                            <select id="edit-badge-select" onchange="toggleCustomBadgeInput(this.value, 'edit-custom-badge-text')" class="w-full p-2.5 bg-white border rounded-xl font-bold text-xs text-slate-800 outline-none">
-                                <option value="AUTO">AUTO (Default)</option>
-                                <option value="NONE">NONE (Hide)</option>
-                                <option value="LIVE ⚡">LIVE ⚡</option>
-                                <option value="NEW ⚡">NEW ⚡</option>
-                                <option value="NEXT ⏳">NEXT ⏳</option>
-                                <option value="HOT 🔥">HOT 🔥</option>
-                                <option value="LEAK 💥">LEAK 💥</option>
-                                <option value="JACKPOT 💰">JACKPOT 💰</option>
-                                <option value="CUSTOM">CUSTOM...</option>
-                            </select>
-                            <input type="text" id="edit-custom-badge-text" placeholder="Custom Tag..." class="w-full p-2.5 mt-2 bg-white border rounded-xl text-xs font-bold hidden outline-none">
-                        </div>
-                    </div>
-
-                    <button onclick="saveMarketSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-lg active:scale-95">
-                        Update Market Time/Name ⚡
-                    </button>
                 </div>
-            </div>
 
-            <!-- New: Monthly Chart Management -->
-            <div class="mt-8 pt-8 border-t border-gray-100">
-                <h3 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">Chart Management 📊</h3>
-                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
-                    <div class="grid grid-cols-3 gap-2">
-                        <select id="chart-year" class="p-2 border rounded-lg text-xs font-bold">
-                            <option value="2026">2026</option>
-                            <option value="2025">2025</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="2019">2019</option>
-                            <option value="2018">2018</option>
-                            <option value="2017">2017</option>
-                        </select>
-                        <select id="chart-month" class="p-2 border rounded-lg text-xs font-bold">
-                            <option value="09">September</option>
-                            <option value="08">August</option>
-                            <option value="07">July</option>
-                            <option value="06">June</option>
-                            <option value="05">May</option>
-                            <option value="04">April</option>
-                            <option value="03">March</option>
-                            <option value="02">February</option>
-                            <option value="01">January</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                        <select id="chart-day" class="p-2 border rounded-lg text-xs font-bold">
-                            <!-- JS will populate 1-31 -->
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Haryana King (HK)</label>
-                            <input type="text" id="chart-hk" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Ram Bazar (RB)</label>
-                            <input type="text" id="chart-rb" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Delhi Bazar (DB)</label>
-                            <input type="text" id="chart-db" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Shree Ganesh (SG)</label>
-                            <input type="text" id="chart-sg" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Faridabad (FB)</label>
-                            <input type="text" id="chart-fb" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Ambala King (AK)</label>
-                            <input type="text" id="chart-ak" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Ghaziabad (GZ)</label>
-                            <input type="text" id="chart-gz" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">HP Night (HN)</label>
-                            <input type="text" id="chart-hn" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Gali (GL)</label>
-                            <input type="text" id="chart-gl" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Desawar (DS)</label>
-                            <input type="text" id="chart-ds" maxlength="2" placeholder="XX" class="w-full p-2 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
-                        </div>
-                    </div>
-
-                    <button onclick="saveChartData()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-blue-700 transition shadow-lg active:scale-95">
-                        Update Chart Data 🚀
-                    </button>
-                    <button onclick="restoreRealPrimaryData()" class="w-full mt-2 bg-emerald-500 text-white py-2.5 rounded-xl font-bold text-xs uppercase hover:bg-emerald-600 transition">
-                        Upload Real Chart Data (DB, SG, FB, GZ, GL, DS) 🛠️
-                    </button>
-                    <p class="text-[9px] text-gray-400 text-center font-bold">Note: This updates the Monthly Record Chart on home page.</p>
+                <div>
+                    <label class="block text-[10px] font-black text-gray-400 mb-1 uppercase">Result Check Time (24hr Format - e.g. 23:30)</label>
+                    <input type="text" id="edit-market-restime" placeholder="HH:MM" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
                 </div>
-            </div>
 
-            <div id="status" class="text-center p-3 rounded-lg bg-green-100 text-green-700 font-bold hidden">
-                ✅ Updated on Website!
+                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
+                    <div>
+                        <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Pin To Top 📌</label>
+                        <label class="flex items-center gap-2 mt-2 cursor-pointer">
+                            <input type="checkbox" id="edit-is-pinned" class="w-5 h-5 rounded">
+                            <span class="text-xs font-bold text-slate-700">Top Priority</span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Badge / Tag 🏷️</label>
+                        <select id="edit-badge-select" onchange="toggleCustomBadgeInput(this.value, 'edit-custom-badge-text')" class="w-full p-2.5 bg-white border rounded-xl font-bold text-xs text-slate-800 outline-none">
+                            <option value="AUTO">AUTO (Default)</option>
+                            <option value="NONE">NONE (Hide)</option>
+                            <option value="LIVE ⚡">LIVE ⚡</option>
+                            <option value="NEW ⚡">NEW ⚡</option>
+                            <option value="NEXT ⏳">NEXT ⏳</option>
+                            <option value="HOT 🔥">HOT 🔥</option>
+                            <option value="LEAK 💥">LEAK 💥</option>
+                            <option value="JACKPOT 💰">JACKPOT 💰</option>
+                            <option value="CUSTOM">CUSTOM...</option>
+                        </select>
+                        <input type="text" id="edit-custom-badge-text" placeholder="Custom Tag..." class="w-full p-2.5 mt-2 bg-white border rounded-xl text-xs font-bold hidden outline-none">
+                    </div>
+                </div>
+
+                <button onclick="saveMarketSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-lg active:scale-95 cursor-pointer">
+                    Update Market Time/Name ⚡
+                </button>
             </div>
         </div>
 
-        <div class="mt-10 border-t pt-6">
-            <h3 class="font-bold text-gray-400 text-xs mb-4 uppercase tracking-widest">Current Live Data:</h3>
-            <div id="current-list" class="space-y-2 max-h-40 overflow-y-auto pr-2">
-                <!-- Status items -->
+        <!-- Section 5: Monthly Chart Record -->
+        <div id="cat-section-chart" class="space-y-6 hidden">
+            <!-- Full Month Chart Row Editor -->
+            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
+                <h4 class="text-xs font-black text-slate-700 uppercase tracking-wider">Full Day All Markets Chart Editor 📊</h4>
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="chart-year" class="p-2.5 border rounded-xl text-xs font-bold bg-white">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                    </select>
+                    <select id="chart-month" class="p-2.5 border rounded-xl text-xs font-bold bg-white">
+                        <option value="09">September</option>
+                        <option value="08">August</option>
+                        <option value="07">July</option>
+                        <option value="06">June</option>
+                        <option value="05">May</option>
+                        <option value="04">April</option>
+                        <option value="03">March</option>
+                        <option value="02">February</option>
+                        <option value="01">January</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <select id="chart-day" class="p-2.5 border rounded-xl text-xs font-bold bg-white">
+                        <!-- JS will populate 1-31 -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Haryana King (HK)</label>
+                        <input type="text" id="chart-hk" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Ram Bazar (RB)</label>
+                        <input type="text" id="chart-rb" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Delhi Bazar (DB)</label>
+                        <input type="text" id="chart-db" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Shree Ganesh (SG)</label>
+                        <input type="text" id="chart-sg" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Faridabad (FB)</label>
+                        <input type="text" id="chart-fb" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Ambala King (AK)</label>
+                        <input type="text" id="chart-ak" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Ghaziabad (GZ)</label>
+                        <input type="text" id="chart-gz" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">HP Night (HN)</label>
+                        <input type="text" id="chart-hn" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Gali (GL)</label>
+                        <input type="text" id="chart-gl" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-500 mb-1 uppercase">Desawar (DS)</label>
+                        <input type="text" id="chart-ds" maxlength="2" placeholder="XX" class="w-full p-2.5 border rounded-xl text-center font-black focus:border-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <button onclick="saveChartData()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-blue-700 transition shadow-lg active:scale-95 cursor-pointer">
+                    Update All Markets Chart Row 🚀
+                </button>
+                <button onclick="restoreRealPrimaryData()" class="w-full mt-2 bg-emerald-500 text-white py-2.5 rounded-xl font-bold text-xs uppercase hover:bg-emerald-600 transition cursor-pointer">
+                    Upload Real Chart Data (DB, SG, FB, GZ, GL, DS) 🛠️
+                </button>
             </div>
-            <button onclick="if(confirm('Delete all global results?')) { db.ref('results').remove(); }" class="mt-6 w-full text-[10px] font-bold text-gray-300 hover:text-red-400 transition uppercase tracking-widest">Reset Full Global Data</button>
+
+            <!-- Single Market Record Chart Quick Editor -->
+            <div class="bg-purple-50/80 p-6 rounded-3xl border-2 border-purple-200 space-y-4 shadow-sm">
+                <h4 class="text-xs font-black text-purple-900 uppercase tracking-wider">Single Market Specific Result Editor 🎯</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <select id="single-edit-market" onchange="loadSingleMarketChartData()" class="p-2.5 bg-white border border-purple-200 rounded-xl font-bold text-xs outline-none focus:border-purple-600">
+                        <option value="HK">Haryana King (HK)</option>
+                        <option value="RB">Ram Bazar (RB)</option>
+                        <option value="DB">Delhi Bazar (DB)</option>
+                        <option value="SG">Shree Ganesh (SG)</option>
+                        <option value="FB">Faridabad (FB)</option>
+                        <option value="AK">Ambala King (AK)</option>
+                        <option value="GZ">Ghaziabad (GZ)</option>
+                        <option value="HN">HP Night (HN)</option>
+                        <option value="GL">Gali (GL)</option>
+                        <option value="DS">Desawar (DS)</option>
+                    </select>
+                    <select id="single-edit-year" onchange="loadSingleMarketChartData()" class="p-2.5 bg-white border border-purple-200 rounded-xl font-bold text-xs outline-none focus:border-purple-600">
+                        <!-- JS populated -->
+                    </select>
+                    <select id="single-edit-month" onchange="loadSingleMarketChartData()" class="p-2.5 bg-white border border-purple-200 rounded-xl font-bold text-xs outline-none focus:border-purple-600">
+                        <option value="09">September</option>
+                        <option value="08">August</option>
+                        <option value="07">July</option>
+                        <option value="06">June</option>
+                        <option value="05">May</option>
+                        <option value="04">April</option>
+                        <option value="03">March</option>
+                        <option value="02">February</option>
+                        <option value="01">January</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <select id="single-edit-day" onchange="loadSingleMarketChartData()" class="p-2.5 bg-white border border-purple-200 rounded-xl font-bold text-xs outline-none focus:border-purple-600">
+                        <!-- JS populated -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-purple-800 mb-1 uppercase">Chart Result Number</label>
+                    <input type="text" id="single-edit-val" maxlength="2" placeholder="XX" class="w-full p-3 bg-white border-2 border-purple-200 rounded-xl text-center font-black text-2xl text-purple-900 outline-none focus:border-purple-600">
+                </div>
+                <div id="single-edit-status" class="text-xs font-bold text-green-700 bg-green-100 p-2 rounded-lg hidden"></div>
+                <button onclick="saveSingleMarketData()" class="w-full bg-purple-700 text-white py-3.5 rounded-2xl font-black text-xs uppercase hover:bg-purple-800 transition shadow-md active:scale-95 cursor-pointer">
+                    Save Single Result 🎯
+                </button>
+            </div>
         </div>
     </div>
 
@@ -576,6 +694,7 @@
         window.addEventListener('load', checkAutoLogin);
 
         function initDashboard() {
+            updateMarketSelects(null);
             // Auto-repair Firebase market names if swapped
             if (typeof db !== 'undefined' && db) {
                 db.ref('settings/markets/SG').update({ id: 'SG', name: 'SHREE GANESH', time: '04:40 PM', resTime: '16:40' });
@@ -608,6 +727,9 @@
             const pubYearSelect = document.getElementById('pub-year');
             const pubMonthSelect = document.getElementById('pub-month');
             const pubDaySelect = document.getElementById('pub-day');
+            const singleYearSelect = document.getElementById('single-edit-year');
+            const singleMonthSelect = document.getElementById('single-edit-month');
+            const singleDaySelect = document.getElementById('single-edit-day');
 
             const todayIST = SattaDateEngine.getTodayIST();
 
@@ -619,6 +741,14 @@
                 chartYearSelect.value = todayIST.yearStr;
             }
 
+            if (singleYearSelect) {
+                singleYearSelect.innerHTML = '';
+                for (let y = parseInt(todayIST.yearStr, 10); y >= 2016; y--) {
+                    singleYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                }
+                singleYearSelect.value = todayIST.yearStr;
+            }
+
             if (pubYearSelect) {
                 pubYearSelect.innerHTML = '';
                 for (let y = parseInt(todayIST.yearStr, 10); y >= 2016; y--) {
@@ -627,9 +757,8 @@
                 pubYearSelect.value = todayIST.yearStr;
             }
 
-            if (pubMonthSelect) {
-                pubMonthSelect.value = todayIST.monthStr;
-            }
+            if (pubMonthSelect) pubMonthSelect.value = todayIST.monthStr;
+            if (singleMonthSelect) singleMonthSelect.value = todayIST.monthStr;
 
             if (pubDaySelect) {
                 pubDaySelect.innerHTML = '';
@@ -640,10 +769,17 @@
                 pubDaySelect.value = todayIST.dayStr;
             }
 
-            const chartMonthSelect = document.getElementById('chart-month');
-            if (chartMonthSelect) {
-                chartMonthSelect.value = todayIST.monthStr;
+            if (singleDaySelect) {
+                singleDaySelect.innerHTML = '';
+                for (let i = 1; i <= 31; i++) {
+                    const val = i.toString().padStart(2, '0');
+                    singleDaySelect.innerHTML += `<option value="${val}">${val}</option>`;
+                }
+                singleDaySelect.value = todayIST.dayStr;
             }
+
+            const chartMonthSelect = document.getElementById('chart-month');
+            if (chartMonthSelect) chartMonthSelect.value = todayIST.monthStr;
 
             // Populate Day select 1-31
             const daySelect = document.getElementById('chart-day');
@@ -657,439 +793,400 @@
                 daySelect.value = todayIST.dayStr;
             }
 
-            daySelect.addEventListener('change', loadExistingChartData);
-            document.getElementById('chart-month').addEventListener('change', loadExistingChartData);
-            document.getElementById('chart-year').addEventListener('change', loadExistingChartData);
+            if (daySelect) daySelect.addEventListener('change', loadExistingChartData);
+            if (document.getElementById('chart-month')) document.getElementById('chart-month').addEventListener('change', loadExistingChartData);
+            if (document.getElementById('chart-year')) document.getElementById('chart-year').addEventListener('change', loadExistingChartData);
+
+            if (document.getElementById('single-edit-market')) document.getElementById('single-edit-market').addEventListener('change', loadSingleMarketChartData);
+            if (document.getElementById('single-edit-year')) document.getElementById('single-edit-year').addEventListener('change', loadSingleMarketChartData);
+            if (document.getElementById('single-edit-month')) document.getElementById('single-edit-month').addEventListener('change', loadSingleMarketChartData);
+            if (document.getElementById('single-edit-day')) document.getElementById('single-edit-day').addEventListener('change', loadSingleMarketChartData);
 
             loadExistingChartData();
             loadSingleMarketChartData();
             updateStatusList();
+            showCategory('home');
         }
+
+        const DEFAULT_MARKETS = [
+            { id: 'HK', name: 'HARYANA KING', time: '01:30 PM', resTime: '13:30' },
+            { id: 'RB', name: 'RAM BAZAR', time: '02:30 PM', resTime: '14:30' },
+            { id: 'DB', name: 'DELHI BAZAR', time: '03:10 PM', resTime: '15:10' },
+            { id: 'SG', name: 'SHREE GANESH', time: '04:40 PM', resTime: '16:40' },
+            { id: 'FB', name: 'FARIDABAD', time: '06:10 PM', resTime: '18:10' },
+            { id: 'AK', name: 'AMBALA KING', time: '07:30 PM', resTime: '19:30' },
+            { id: 'GZ', name: 'GAZIYABAD', time: '10:00 PM', resTime: '22:00' },
+            { id: 'HN', name: 'HIMACHAL NIGHT', time: '10:40 PM', resTime: '22:40' },
+            { id: 'GL', name: 'GALI', time: '12:00 AM', resTime: '00:00' },
+            { id: 'DS', name: 'DISAWAR', time: '05:10 AM', resTime: '05:10' }
+        ];
 
         function updateMarketSelects(cloudMarkets) {
             const select = document.getElementById('market-select');
             const editSelect = document.getElementById('edit-market-select');
             const standaloneSelect = document.getElementById('standalone-pin-market-select');
+            const singleEditSelect = document.getElementById('single-edit-market');
 
-            select.innerHTML = '';
-            editSelect.innerHTML = '<option value="">-- Select to Edit --</option>';
-            if (standaloneSelect) standaloneSelect.innerHTML = '<option value="">-- Select Market --</option>';
+            const cData = cloudMarkets || {};
 
-            const defaultList = [
-                { id: 'HK', name: 'HARYANA KING', time: '01:30 PM', resTime: '13:30' },
-                { id: 'RB', name: 'RAM BAZAR', time: '02:30 PM', resTime: '14:30' },
-                { id: 'DB', name: 'DELHI BAZAR', time: '03:10 PM', resTime: '15:10' },
-                { id: 'SG', name: 'SHREE GANESH', time: '04:40 PM', resTime: '16:40' },
-                { id: 'FB', name: 'FARIDABAD', time: '06:10 PM', resTime: '18:10' },
-                { id: 'AK', name: 'AMBALA KING', time: '07:30 PM', resTime: '19:30' },
-                { id: 'GZ', name: 'GAZIYABAD', time: '10:00 PM', resTime: '22:00' },
-                { id: 'HN', name: 'HIMACHAL NIGHT', time: '10:40 PM', resTime: '22:40' },
-                { id: 'GL', name: 'GALI', time: '12:00 AM', resTime: '00:00' },
-                { id: 'DS', name: 'DISAWAR', time: '05:10 AM', resTime: '05:10' }
-            ];
-
-            const marketsToUse = defaultList.map(m => {
-                if (cloudMarkets && cloudMarkets[m.id]) {
-                    return { ...m, ...cloudMarkets[m.id] };
-                }
-                return m;
+            const mergedList = DEFAULT_MARKETS.map(m => {
+                const cloudM = cData[m.id];
+                return {
+                    id: m.id,
+                    name: (cloudM && cloudM.name) ? cloudM.name : m.name,
+                    time: (cloudM && cloudM.time) ? cloudM.time : m.time,
+                    resTime: (cloudM && cloudM.resTime) ? cloudM.resTime : m.resTime
+                };
             });
 
-            MARKET_LIST = marketsToUse.map(m => ({ id: m.id, name: m.name }));
-
-            marketsToUse.forEach(m => {
-                select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
-                editSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`;
-                if (standaloneSelect) standaloneSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`;
-            });
-
-            loadMarketData(marketsToUse[0].id);
-            if (standaloneSelect && marketsToUse[0]) {
-                standaloneSelect.value = marketsToUse[0].id;
-                loadStandalonePinBadge(marketsToUse[0].id);
-            }
-        }
-
-        function syncPinFromPosition(posVal, pinCheckId) {
-            const pinEl = document.getElementById(pinCheckId);
-            if (!pinEl) return;
-            const p = parseInt(posVal, 10) || 0;
-            if (p > 0) {
-                pinEl.checked = true;
-            } else {
-                pinEl.checked = false;
-            }
-        }
-
-        function syncPositionFromPin(isChecked, posSelectId) {
-            const posEl = document.getElementById(posSelectId);
-            if (!posEl) return;
-            if (isChecked) {
-                if (parseInt(posEl.value, 10) === 0) {
-                    posEl.value = '1';
+            // Include any custom market not in default list
+            for (let k in cData) {
+                if (cData[k] && cData[k].id && !mergedList.some(item => item.id === cData[k].id)) {
+                    mergedList.push({
+                        id: cData[k].id,
+                        name: cData[k].name || cData[k].id,
+                        time: cData[k].time || '12:00 PM',
+                        resTime: cData[k].resTime || '12:00'
+                    });
                 }
-            } else {
-                posEl.value = '0';
             }
+
+            if (select) {
+                const curVal = select.value;
+                select.innerHTML = '';
+                mergedList.forEach(m => {
+                    select.innerHTML += `<option value="${m.id}">${m.name} (${m.time})</option>`;
+                });
+                if (curVal && mergedList.some(m => m.id === curVal)) {
+                    select.value = curVal;
+                }
+            }
+
+            if (editSelect) {
+                const curVal = editSelect.value;
+                editSelect.innerHTML = '<option value="">-- Select to Edit --</option>';
+                mergedList.forEach(m => {
+                    editSelect.innerHTML += `<option value="${m.id}">${m.name} (${m.time})</option>`;
+                });
+                if (curVal) editSelect.value = curVal;
+            }
+
+            if (standaloneSelect) {
+                const curVal = standaloneSelect.value;
+                standaloneSelect.innerHTML = '<option value="">-- Select Market --</option>';
+                mergedList.forEach(m => {
+                    standaloneSelect.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+                });
+                if (curVal) standaloneSelect.value = curVal;
+            }
+
+            if (singleEditSelect) {
+                const curVal = singleEditSelect.value;
+                singleEditSelect.innerHTML = '';
+                mergedList.forEach(m => {
+                    singleEditSelect.innerHTML += `<option value="${m.id}">${m.name} (${m.id})</option>`;
+                });
+                if (curVal) singleEditSelect.value = curVal;
+            }
+
+            if (select && select.value) loadMarketData(select.value);
+            if (standaloneSelect && standaloneSelect.value) loadStandalonePinBadge(standaloneSelect.value);
         }
 
-        function loadStandalonePinBadge(id) {
-            if (!id) return;
-            db.ref('settings/markets/' + id).once('value', function(mSnap) {
-                const mData = mSnap.val() || {};
-                db.ref('results/' + id).once('value', function(snap) {
-                    const data = snap.val() || {};
+        let lastLoadedToday = 'XX';
+        function loadMarketData(marketId) {
+            const year = document.getElementById('pub-year') ? document.getElementById('pub-year').value : SattaDateEngine.getTodayIST().yearStr;
+            const month = document.getElementById('pub-month') ? document.getElementById('pub-month').value : SattaDateEngine.getTodayIST().monthStr;
+            const day = document.getElementById('pub-day') ? document.getElementById('pub-day').value : SattaDateEngine.getTodayIST().dayStr;
 
-                    const posVal = mData.position !== undefined ? mData.position : (data.position || 0);
-                    const posSelect = document.getElementById('standalone-position-select');
-                    if (posSelect) posSelect.value = posVal.toString();
+            const selectedDateStr = `${year}-${month}-${day}`;
+            const todayDateStr = SattaDateEngine.getTodayIST().isoStr;
 
-                    const pinEl = document.getElementById('standalone-is-pinned');
-                    if (pinEl) {
-                        pinEl.checked = (posVal > 0) || (mData.isPinned !== undefined ? mData.isPinned : (data.isPinned || false));
+            db.ref('results/' + marketId).once('value', function(snap) {
+                const data = snap.val();
+                if (data) {
+                    let pubTimestamp = data.updatedAt || Date.now();
+                    let pubDateObj = SattaDateEngine.getISTDate(new Date(pubTimestamp));
+
+                    if (selectedDateStr === todayDateStr) {
+                        lastLoadedToday = data.today || 'XX';
+                        document.getElementById('today-val').value = (data.today === 'XX' || data.today === '---') ? '' : data.today;
+                        document.getElementById('yesterday-val').value = (data.yesterday === 'XX' || data.yesterday === '---') ? '' : data.yesterday;
+                        document.getElementById('is-live').checked = !!data.live;
+                        document.getElementById('show-instantly').checked = !!data.showInstantly;
+                    } else if (pubDateObj.isoStr === selectedDateStr) {
+                        lastLoadedToday = data.today || 'XX';
+                        document.getElementById('today-val').value = (data.today === 'XX' || data.today === '---') ? '' : data.today;
+                        document.getElementById('yesterday-val').value = (data.yesterday === 'XX' || data.yesterday === '---') ? '' : data.yesterday;
+                        document.getElementById('is-live').checked = !!data.live;
+                        document.getElementById('show-instantly').checked = !!data.showInstantly;
+                    } else {
+                        db.ref(`charts/${year}/${month}/${day}/${marketId}`).once('value', function(chartSnap) {
+                            const cVal = chartSnap.val();
+                            document.getElementById('today-val').value = (cVal && cVal !== 'XX' && cVal !== '---') ? cVal : '';
+                            document.getElementById('yesterday-val').value = (data.today === 'XX' || data.today === '---') ? '' : data.today;
+                            document.getElementById('is-live').checked = false;
+                            document.getElementById('show-instantly').checked = true;
+                            lastLoadedToday = (cVal && cVal !== 'XX' && cVal !== '---') ? cVal : 'XX';
+                        });
                     }
 
-                    const bSelect = document.getElementById('standalone-badge-select');
-                    const cInput = document.getElementById('standalone-custom-badge-text');
-                    const badgeVal = mData.badge || data.badge || 'AUTO';
-
-                    if (bSelect) {
-                        const stdOpts = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
-                        if (stdOpts.includes(badgeVal)) {
-                            bSelect.value = badgeVal;
-                            if (cInput) cInput.classList.add('hidden');
+                    if (document.getElementById('position-select')) {
+                        document.getElementById('position-select').value = (data.position !== undefined) ? data.position : (data.isPinned ? 1 : 0);
+                    }
+                    if (document.getElementById('is-pinned')) {
+                        document.getElementById('is-pinned').checked = (data.position && data.position > 0) ? true : !!data.isPinned;
+                    }
+                    if (document.getElementById('badge-select')) {
+                        const bVal = data.badge || 'AUTO';
+                        const presetOptions = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
+                        if (presetOptions.includes(bVal)) {
+                            document.getElementById('badge-select').value = bVal;
+                            document.getElementById('custom-badge-text').classList.add('hidden');
                         } else {
-                            bSelect.value = 'CUSTOM';
-                            if (cInput) {
-                                cInput.value = badgeVal;
-                                cInput.classList.remove('hidden');
-                            }
+                            document.getElementById('badge-select').value = 'CUSTOM';
+                            document.getElementById('custom-badge-text').value = bVal;
+                            document.getElementById('custom-badge-text').classList.remove('hidden');
                         }
                     }
+                } else {
+                    document.getElementById('today-val').value = '';
+                    document.getElementById('yesterday-val').value = '';
+                    document.getElementById('is-live').checked = false;
+                    document.getElementById('show-instantly').checked = false;
+                    if (document.getElementById('position-select')) document.getElementById('position-select').value = '0';
+                    if (document.getElementById('is-pinned')) document.getElementById('is-pinned').checked = false;
+                    if (document.getElementById('badge-select')) document.getElementById('badge-select').value = 'AUTO';
+                    if (document.getElementById('custom-badge-text')) document.getElementById('custom-badge-text').classList.add('hidden');
+                    lastLoadedToday = 'XX';
+                }
+            });
+        }
+
+        function syncPinFromPosition(posVal, pinElementId) {
+            const pinCheckbox = document.getElementById(pinElementId);
+            if (pinCheckbox) {
+                pinCheckbox.checked = (parseInt(posVal, 10) > 0);
+            }
+        }
+
+        function syncPositionFromPin(isPinned, posSelectId) {
+            const posSelect = document.getElementById(posSelectId);
+            if (posSelect) {
+                if (isPinned && posSelect.value === '0') {
+                    posSelect.value = '1';
+                } else if (!isPinned) {
+                    posSelect.value = '0';
+                }
+            }
+        }
+
+        function toggleCustomBadgeInput(badgeVal, customInputId) {
+            const customInput = document.getElementById(customInputId);
+            if (customInput) {
+                if (badgeVal === 'CUSTOM') {
+                    customInput.classList.remove('hidden');
+                    customInput.focus();
+                } else {
+                    customInput.classList.add('hidden');
+                    customInput.value = '';
+                }
+            }
+        }
+
+        function publish() {
+            const id = document.getElementById('market-select').value;
+            const today = document.getElementById('today-val').value.trim() || 'XX';
+            const yesterday = document.getElementById('yesterday-val').value.trim() || '--';
+            const isLive = document.getElementById('is-live').checked;
+            const showInstantly = document.getElementById('show-instantly').checked;
+
+            const posSelect = document.getElementById('position-select');
+            const position = posSelect ? parseInt(posSelect.value, 10) : 0;
+            const isPinned = position > 0 || (document.getElementById('is-pinned') ? document.getElementById('is-pinned').checked : false);
+
+            const badgeSelect = document.getElementById('badge-select');
+            let badge = badgeSelect ? badgeSelect.value : 'AUTO';
+            if (badge === 'CUSTOM') {
+                badge = document.getElementById('custom-badge-text').value.trim() || 'AUTO';
+            }
+
+            const targetYear = document.getElementById('pub-year').value;
+            const targetMonth = document.getElementById('pub-month').value;
+            const targetDay = document.getElementById('pub-day').value;
+
+            const todayIST = SattaDateEngine.getTodayIST();
+            const isTargetToday = (targetYear === todayIST.yearStr && targetMonth === todayIST.monthStr && targetDay === todayIST.dayStr);
+
+            let publishTimestamp = Date.now();
+            if (!isTargetToday) {
+                const customDate = new Date(`${targetYear}-${targetMonth}-${targetDay}T12:00:00+05:30`);
+                publishTimestamp = customDate.getTime();
+            }
+
+            db.ref('results/' + id).once('value', function(snap) {
+                const oldData = snap.val() || {};
+                const name = oldData.name || id;
+                const time = oldData.time || '12:00 PM';
+
+                const payload = {
+                    name: name,
+                    time: time,
+                    today: today,
+                    yesterday: yesterday,
+                    live: isLive,
+                    showInstantly: showInstantly,
+                    position: position,
+                    isPinned: isPinned,
+                    badge: badge,
+                    updatedAt: publishTimestamp
+                };
+
+                db.ref('results/' + id).update(payload).then(function() {
+                    db.ref(`charts/${targetYear}/${targetMonth}/${targetDay}/${id}`).set(today);
+
+                    const status = document.getElementById('status');
+                    status.innerText = `✅ Saved ${name}: Today=${today}, Position=${position>0 ? '#'+position : 'Auto'}, Badge=${badge}! Date=${targetDay}-${targetMonth}-${targetYear}`;
+                    status.classList.remove('hidden');
+                    status.style.display = 'block';
+                    setTimeout(function() {
+                        status.classList.add('hidden');
+                        status.style.display = 'none';
+                    }, 4000);
+                    alert(`${name} Result & Settings Published for Date ${targetDay}-${targetMonth}-${targetYear}! 🚀`);
                 });
             });
         }
 
-        function saveStandalonePinBadge() {
-            const id = document.getElementById('standalone-pin-market-select').value;
-            if (!id) return alert("Please select a market first!");
+        function loadStandalonePinBadge(marketId) {
+            if (!marketId) return;
+            db.ref('results/' + marketId).once('value', function(snap) {
+                const data = snap.val();
+                if (data) {
+                    const posSelect = document.getElementById('standalone-position-select');
+                    const pinCheck = document.getElementById('standalone-is-pinned');
+                    const badgeSelect = document.getElementById('standalone-badge-select');
+                    const customBadgeInput = document.getElementById('standalone-custom-badge-text');
 
-            const posVal = document.getElementById('standalone-position-select') ? parseInt(document.getElementById('standalone-position-select').value, 10) || 0 : 0;
-            const isPinned = (posVal > 0) || (document.getElementById('standalone-is-pinned') ? document.getElementById('standalone-is-pinned').checked : false);
-            const bSelectVal = document.getElementById('standalone-badge-select') ? document.getElementById('standalone-badge-select').value : 'AUTO';
-            const cInputVal = document.getElementById('standalone-custom-badge-text') ? document.getElementById('standalone-custom-badge-text').value.trim() : '';
+                    if (posSelect) posSelect.value = (data.position !== undefined) ? data.position : (data.isPinned ? 1 : 0);
+                    if (pinCheck) pinCheck.checked = (data.position && data.position > 0) ? true : !!data.isPinned;
 
-            let finalBadge = bSelectVal;
-            if (bSelectVal === 'CUSTOM') {
-                finalBadge = cInputVal || 'CUSTOM';
-            }
-
-            const updates = {};
-            updates['settings/markets/' + id + '/position'] = posVal;
-            updates['settings/markets/' + id + '/isPinned'] = isPinned;
-            updates['settings/markets/' + id + '/badge'] = finalBadge;
-            updates['results/' + id + '/position'] = posVal;
-            updates['results/' + id + '/isPinned'] = isPinned;
-            updates['results/' + id + '/badge'] = finalBadge;
-
-            db.ref().update(updates).then(function() {
-                alert(`Market ${id} Position (${posVal > 0 ? '#' + posVal : 'Auto'}) & Badge Updated Successfully! 📌⚡`);
-                if (document.getElementById('market-select').value === id) {
-                    loadMarketData(id);
-                }
-            }).catch(function(err) {
-                alert("Firebase Error: " + err.message);
-            });
-        }
-
-        function toggleCustomBadgeInput(val, targetId) {
-            const el = document.getElementById(targetId);
-            if (!el) return;
-            if (val === 'CUSTOM') {
-                el.classList.remove('hidden');
-                el.focus();
-            } else {
-                el.classList.add('hidden');
-            }
-        }
-
-        function loadMarketSettings(id) {
-            if(!id) return;
-            db.ref('settings/markets/' + id).once('value', function(snap) {
-                const data = snap.val() || {};
-                document.getElementById('edit-market-name').value = data.name || '';
-                document.getElementById('edit-market-time').value = data.time || '';
-                document.getElementById('edit-market-restime').value = data.resTime || '';
-
-                if (document.getElementById('edit-is-pinned')) {
-                    document.getElementById('edit-is-pinned').checked = data.isPinned || false;
-                }
-
-                const editSelect = document.getElementById('edit-badge-select');
-                const editCustom = document.getElementById('edit-custom-badge-text');
-                const badgeVal = data.badge || 'AUTO';
-
-                if (editSelect) {
-                    const stdOpts = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
-                    if (stdOpts.includes(badgeVal)) {
-                        editSelect.value = badgeVal;
-                        if (editCustom) editCustom.classList.add('hidden');
-                    } else {
-                        editSelect.value = 'CUSTOM';
-                        if (editCustom) {
-                            editCustom.value = badgeVal;
-                            editCustom.classList.remove('hidden');
+                    if (badgeSelect) {
+                        const bVal = data.badge || 'AUTO';
+                        const presetOptions = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
+                        if (presetOptions.includes(bVal)) {
+                            badgeSelect.value = bVal;
+                            if (customBadgeInput) customBadgeInput.classList.add('hidden');
+                        } else {
+                            badgeSelect.value = 'CUSTOM';
+                            if (customBadgeInput) {
+                                customBadgeInput.value = bVal;
+                                customBadgeInput.classList.remove('hidden');
+                            }
                         }
                     }
                 }
+            });
+        }
+
+        function saveStandalonePinBadge() {
+            const marketId = document.getElementById('standalone-pin-market-select').value;
+            if (!marketId) return alert("Select a market first!");
+
+            const posSelect = document.getElementById('standalone-position-select');
+            const position = posSelect ? parseInt(posSelect.value, 10) : 0;
+            const isPinned = position > 0 || document.getElementById('standalone-is-pinned').checked;
+
+            const badgeSelect = document.getElementById('standalone-badge-select');
+            let badge = badgeSelect ? badgeSelect.value : 'AUTO';
+            if (badge === 'CUSTOM') {
+                badge = document.getElementById('standalone-custom-badge-text').value.trim() || 'AUTO';
+            }
+
+            db.ref('results/' + marketId).update({
+                position: position,
+                isPinned: isPinned,
+                badge: badge,
+                updatedAt: Date.now()
+            }).then(function() {
+                const status = document.getElementById('status');
+                status.innerText = `✅ Position (#${position}) & Badge (${badge}) Updated for ${marketId}!`;
+                status.classList.remove('hidden');
+                status.style.display = 'block';
+                setTimeout(() => {
+                    status.classList.add('hidden');
+                    status.style.display = 'none';
+                }, 3000);
+                alert(`Position (#${position}) & Badge (${badge}) Updated for ${marketId}! 🚀`);
             });
         }
 
         function saveMarketSettings() {
             const id = document.getElementById('edit-market-select').value;
-            if(!id) return alert("Please select a market first!");
+            const name = document.getElementById('edit-market-name').value.trim();
+            const time = document.getElementById('edit-market-time').value.trim();
+            const resTime = document.getElementById('edit-market-restime').value.trim();
+            const isPinned = document.getElementById('edit-is-pinned').checked;
 
-            const isPinned = document.getElementById('edit-is-pinned') ? document.getElementById('edit-is-pinned').checked : false;
-            const badgeSel = document.getElementById('edit-badge-select') ? document.getElementById('edit-badge-select').value : 'AUTO';
-            const customTxt = document.getElementById('edit-custom-badge-text') ? document.getElementById('edit-custom-badge-text').value.trim() : '';
-
-            let finalBadge = badgeSel;
-            if (badgeSel === 'CUSTOM') {
-                finalBadge = customTxt || 'CUSTOM';
+            const badgeSelect = document.getElementById('edit-badge-select');
+            let badge = badgeSelect ? badgeSelect.value : 'AUTO';
+            if (badge === 'CUSTOM') {
+                badge = document.getElementById('edit-custom-badge-text').value.trim() || 'AUTO';
             }
 
-            const updatedMarket = {
-                name: document.getElementById('edit-market-name').value,
-                time: document.getElementById('edit-market-time').value,
-                resTime: document.getElementById('edit-market-restime').value,
+            if (!id || !name) return alert("Select Market and enter Name!");
+
+            const mData = { id: id, name: name, time: time, resTime: resTime, isPinned: isPinned, badge: badge };
+
+            db.ref('settings/markets/' + id).update(mData);
+
+            db.ref('results/' + id).update({
+                name: name,
+                time: time,
                 isPinned: isPinned,
-                badge: finalBadge
-            };
-
-            const updates = {};
-            updates['settings/markets/' + id] = updatedMarket;
-            updates['results/' + id + '/isPinned'] = isPinned;
-            updates['results/' + id + '/badge'] = finalBadge;
-
-            db.ref().update(updates).then(function() {
-                alert("Market Settings, Top Pin & Badge Updated Successfully! 🚀");
-                loadMarketData(id);
-            });
-        }
-
-        let lastLoadedToday = 'XX';
-
-        function loadMarketData(id) {
-            if (!id) return;
-
-            const pubY = document.getElementById('pub-year') ? document.getElementById('pub-year').value : SattaDateEngine.getTodayIST().yearStr;
-            const pubM = document.getElementById('pub-month') ? document.getElementById('pub-month').value : SattaDateEngine.getTodayIST().monthStr;
-            const pubD = document.getElementById('pub-day') ? document.getElementById('pub-day').value : SattaDateEngine.getTodayIST().dayStr;
-
-            const yestIST = SattaDateEngine.getYesterdayIST();
-            const yestY = yestIST.yearStr;
-            const yestM = yestIST.monthStr;
-            const yestD = yestIST.dayStr;
-
-            // Fetch target date chart value & yesterday's exact historical chart record for this market
-            let fallbackYesterday = '';
-            if (typeof REAL_PRIMARY_MARKET_DATA !== 'undefined' && REAL_PRIMARY_MARKET_DATA[yestY] && REAL_PRIMARY_MARKET_DATA[yestY][yestM] && REAL_PRIMARY_MARKET_DATA[yestY][yestM][yestD]) {
-                fallbackYesterday = REAL_PRIMARY_MARKET_DATA[yestY][yestM][yestD][id] || '';
-            }
-
-            db.ref('settings/markets/' + id).once('value', function(mSnap) {
-                const mData = mSnap.val() || {};
-
-                db.ref(`charts/${pubY}/${pubM}/${pubD}/${id}`).once('value', function(chartSnap) {
-                    const targetChartVal = chartSnap.val();
-
-                    db.ref(`charts/${yestY}/${yestM}/${yestD}/${id}`).once('value', function(chartYestSnap) {
-                        const chartYestVal = chartYestSnap.val();
-
-                        db.ref('results/' + id).once('value', function(snap) {
-                            const data = snap.val() || {};
-                            lastLoadedToday = data.today || 'XX';
-
-                            const todayInput = document.getElementById('today-val');
-                            const yesterdayInput = document.getElementById('yesterday-val');
-
-                            if (todayInput) {
-                                const valToShow = targetChartVal || data.today;
-                                todayInput.value = (valToShow === 'XX' || valToShow === '---' || !valToShow) ? '' : valToShow;
-                            }
-
-                            // Auto-fill Yesterday's number from historical record, previous day result, or saved results!
-                            let finalYest = chartYestVal;
-                            if (!finalYest || finalYest === 'XX' || finalYest === '---') {
-                                const pubIST = SattaDateEngine.getISTDate(new Date(data.updatedAt || 0));
-                                const curDateUtc = Date.UTC(parseInt(todayIST.yearStr, 10), parseInt(todayIST.monthStr, 10) - 1, parseInt(todayIST.dayStr, 10));
-                                const pubDateUtc = Date.UTC(parseInt(pubIST.yearStr, 10), parseInt(pubIST.monthStr, 10) - 1, parseInt(pubIST.dayStr, 10));
-                                const diffDays = Math.floor((curDateUtc - pubDateUtc) / 86400000);
-
-                                if (diffDays === 0) {
-                                    finalYest = data.yesterday;
-                                } else if (diffDays === 1 && data.today && data.today !== 'XX' && data.today !== '---') {
-                                    finalYest = data.today;
-                                } else {
-                                    finalYest = (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
-                                }
-                            }
-
-                            if (yesterdayInput) {
-                                yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX' || !finalYest) ? '' : finalYest;
-                            }
-
-                            const isLive = document.getElementById('is-live');
-                            if (isLive) isLive.checked = data.live || false;
-
-                            const showInstantly = document.getElementById('show-instantly');
-                            if (showInstantly) showInstantly.checked = data.showInstantly || false;
-
-                            // Load Position & Pin & Badge Tag Settings
-                            const posVal = mData.position !== undefined ? mData.position : (data.position || 0);
-                            const posSelect = document.getElementById('position-select');
-                            if (posSelect) posSelect.value = posVal.toString();
-
-                            const isPinnedEl = document.getElementById('is-pinned');
-                            if (isPinnedEl) {
-                                isPinnedEl.checked = (posVal > 0) || (mData.isPinned !== undefined ? mData.isPinned : (data.isPinned || false));
-                            }
-
-                            const badgeSelect = document.getElementById('badge-select');
-                            const customInput = document.getElementById('custom-badge-text');
-                            const badgeVal = mData.badge || data.badge || 'AUTO';
-
-                            if (badgeSelect) {
-                                const stdOpts = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
-                                if (stdOpts.includes(badgeVal)) {
-                                    badgeSelect.value = badgeVal;
-                                    if (customInput) customInput.classList.add('hidden');
-                                } else {
-                                    badgeSelect.value = 'CUSTOM';
-                                    if (customInput) {
-                                        customInput.value = badgeVal;
-                                        customInput.classList.remove('hidden');
-                                    }
-                                }
-                            }
-                        });
-                    });
-                });
-            });
-        }
-
-        function publish() {
-            const btn = document.getElementById('btn-publish');
-            btn.disabled = true;
-            btn.innerText = "UPDATING...";
-
-            const id = document.getElementById('market-select').value;
-            if (!id) {
-                btn.disabled = false;
-                btn.innerText = "SAVE & PUBLISH 🚀";
-                return alert("Please select a market!");
-            }
-
-            const marketObj = MARKET_LIST.find(m => m.id === id);
-            const mName = marketObj ? marketObj.name : "Market";
-
-            const todayVal = document.getElementById('today-val').value.trim() || 'XX';
-            const yesterdayVal = document.getElementById('yesterday-val').value.trim() || '--';
-            const isLive = document.getElementById('is-live').checked;
-
-            const posVal = document.getElementById('position-select') ? parseInt(document.getElementById('position-select').value, 10) || 0 : 0;
-            const isPinned = (posVal > 0) || (document.getElementById('is-pinned') ? document.getElementById('is-pinned').checked : false);
-            const badgeSel = document.getElementById('badge-select') ? document.getElementById('badge-select').value : 'AUTO';
-            const customTxt = document.getElementById('custom-badge-text') ? document.getElementById('custom-badge-text').value.trim() : '';
-
-            let finalBadge = badgeSel;
-            if (badgeSel === 'CUSTOM') {
-                finalBadge = customTxt || 'CUSTOM';
-            }
-
-            const todayIST = SattaDateEngine.getTodayIST();
-            const yestIST = SattaDateEngine.getYesterdayIST();
-
-            const pubY = document.getElementById('pub-year') ? document.getElementById('pub-year').value : todayIST.yearStr;
-            const pubM = document.getElementById('pub-month') ? document.getElementById('pub-month').value : todayIST.monthStr;
-            const pubD = document.getElementById('pub-day') ? document.getElementById('pub-day').value : todayIST.dayStr;
-
-            const yestY = yestIST.yearStr;
-            const yestM = yestIST.monthStr;
-            const yestD = yestIST.dayStr;
-
-            const isPublishingForToday = (pubY === todayIST.yearStr && pubM === todayIST.monthStr && pubD === todayIST.dayStr);
-            const pubTimestamp = isPublishingForToday ? Date.now() : (new Date(parseInt(pubY, 10), parseInt(pubM, 10) - 1, parseInt(pubD, 10), 23, 59, 0)).getTime();
-
-            const newData = {
-                name: mName,
-                today: todayVal,
-                yesterday: yesterdayVal,
-                live: isLive,
-                showInstantly: document.getElementById('show-instantly').checked,
-                position: posVal,
-                isPinned: isPinned,
-                badge: finalBadge,
-                updatedAt: pubTimestamp
-            };
-
-            // Atomic 1-click update: Syncs live result card AND monthly chart table simultaneously!
-            const updates = {};
-            updates['results/' + id] = newData;
-            updates['settings/markets/' + id + '/position'] = posVal;
-            updates['settings/markets/' + id + '/isPinned'] = isPinned;
-            updates['settings/markets/' + id + '/badge'] = finalBadge;
-
-            if (todayVal && todayVal !== 'XX') {
-                updates[`charts/${pubY}/${pubM}/${pubD}/${id}`] = todayVal;
-            }
-
-            if (yesterdayVal && yesterdayVal !== '--' && yesterdayVal !== '---') {
-                updates[`charts/${yestY}/${yestM}/${yestD}/${id}`] = yesterdayVal;
-            }
-
-            db.ref().update(updates).then(function() {
+                badge: badge
+            }).then(function() {
                 const status = document.getElementById('status');
-                status.innerText = `✅ Result for Date ${pubD}-${pubM}-${pubY} Updated Live! 🚀`;
+                status.innerText = `✅ Market Settings Saved for ${name}!`;
                 status.classList.remove('hidden');
-
-                btn.disabled = false;
-                btn.innerText = "SAVE & PUBLISH 🚀";
-                setTimeout(function() { status.classList.add('hidden'); }, 3000);
-                updateStatusList();
-            }).catch(function(err) {
-                alert("Firebase Error: " + err.message);
-                btn.disabled = false;
-                btn.innerText = "SAVE & PUBLISH 🚀";
+                status.style.display = 'block';
+                setTimeout(() => {
+                    status.classList.add('hidden');
+                    status.style.display = 'none';
+                }, 3000);
+                alert("Market Settings Updated Successfully!");
             });
         }
 
-        function updateYesterdayOnly() {
-            const id = document.getElementById('market-select').value;
-            const yesterdayVal = document.getElementById('yesterday-val').value.trim();
+        function loadMarketSettings(id) {
+            if (!id) return;
+            db.ref('results/' + id).once('value', function(snap) {
+                const data = snap.val();
+                if (data) {
+                    document.getElementById('edit-market-name').value = data.name || '';
+                    document.getElementById('edit-market-time').value = data.time || '';
+                    document.getElementById('edit-is-pinned').checked = !!data.isPinned;
 
-            if (!id) return alert("Please select a market first!");
-            if (!yesterdayVal) return alert("Please enter Yesterday's number!");
-
-            const yestIST = SattaDateEngine.getYesterdayIST();
-            const yestY = yestIST.yearStr;
-            const yestM = yestIST.monthStr;
-            const yestD = yestIST.dayStr;
-
-            const updates = {};
-            updates[`results/${id}/yesterday`] = yesterdayVal;
-            updates[`charts/${yestY}/${yestM}/${yestD}/${id}`] = yesterdayVal;
-
-            db.ref().update(updates).then(function() {
-                const status = document.getElementById('status');
-                if (status) {
-                    status.innerText = `✅ Yesterday's Result (${yesterdayVal}) Updated for ${id}! 🚀`;
-                    status.classList.remove('hidden');
-                    setTimeout(() => status.classList.add('hidden'), 3000);
+                    if (document.getElementById('edit-badge-select')) {
+                        const bVal = data.badge || 'AUTO';
+                        const presetOptions = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
+                        if (presetOptions.includes(bVal)) {
+                            document.getElementById('edit-badge-select').value = bVal;
+                            document.getElementById('edit-custom-badge-text').classList.add('hidden');
+                        } else {
+                            document.getElementById('edit-badge-select').value = 'CUSTOM';
+                            document.getElementById('edit-custom-badge-text').value = bVal;
+                            document.getElementById('edit-custom-badge-text').classList.remove('hidden');
+                        }
+                    }
                 }
-                alert(`Yesterday's Result (${yesterdayVal}) Updated Successfully for ${id}! 🚀`);
-            }).catch(function(err) {
-                alert("Firebase Error: " + err.message);
+            });
+
+            db.ref('settings/markets/' + id).once('value', function(snap) {
+                const data = snap.val();
+                if (data && data.resTime) {
+                    document.getElementById('edit-market-restime').value = data.resTime;
+                }
             });
         }
 
@@ -1170,7 +1267,11 @@
                 if (status) {
                     status.innerText = `✅ Saved ${mId} = ${val} for Date ${d}-${m}-${y}!`;
                     status.classList.remove('hidden');
-                    setTimeout(() => status.classList.add('hidden'), 4000);
+                    status.style.display = 'block';
+                    setTimeout(() => {
+                        status.classList.add('hidden');
+                        status.style.display = 'none';
+                    }, 4000);
                 }
                 alert(`Single Market ${mId} Result Updated for ${d}-${m}-${y}! 🚀`);
             });
@@ -1276,8 +1377,70 @@
         });
 
         function editResult(id) {
+            showCategory('publish');
             document.getElementById('market-select').value = id;
             loadMarketData(id);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showCategory(catName) {
+            const homeView = document.getElementById('admin-home-view');
+            const backBtn = document.getElementById('btn-back-home');
+            const catTitle = document.getElementById('category-title');
+            const categories = ['publish', 'order', 'theme', 'market', 'chart'];
+
+            const targetCategory = (!catName || catName === 'home') ? 'home' : catName;
+
+            if (targetCategory === 'home') {
+                if (homeView) {
+                    homeView.classList.remove('hidden');
+                    homeView.style.display = 'block';
+                }
+                if (backBtn) {
+                    backBtn.classList.add('hidden');
+                    backBtn.style.display = 'none';
+                }
+                if (catTitle) catTitle.innerText = 'Master Control Dashboard';
+
+                categories.forEach(c => {
+                    const el = document.getElementById('cat-section-' + c);
+                    if (el) {
+                        el.classList.add('hidden');
+                        el.style.display = 'none';
+                    }
+                });
+            } else {
+                if (homeView) {
+                    homeView.classList.add('hidden');
+                    homeView.style.display = 'none';
+                }
+                if (backBtn) {
+                    backBtn.classList.remove('hidden');
+                    backBtn.style.display = 'inline-flex';
+                }
+
+                const titleMap = {
+                    publish: '🚀 Publish Daily Result',
+                    order: '📌 Position & Badges',
+                    theme: '⚡ Themes & Site Notices',
+                    market: '⏰ Market Time & Names',
+                    chart: '📊 Monthly Chart Manager'
+                };
+                if (catTitle) catTitle.innerText = titleMap[targetCategory] || 'Category Control';
+
+                categories.forEach(c => {
+                    const el = document.getElementById('cat-section-' + c);
+                    if (el) {
+                        if (c === targetCategory) {
+                            el.classList.remove('hidden');
+                            el.style.display = 'block';
+                        } else {
+                            el.classList.add('hidden');
+                            el.style.display = 'none';
+                        }
+                    }
+                });
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
