@@ -918,10 +918,25 @@
                                 todayInput.value = (valToShow === 'XX' || valToShow === '---' || !valToShow) ? '' : valToShow;
                             }
 
-                            // Auto-fill Yesterday's number from historical record or saved results!
-                            let finalYest = chartYestVal || (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
+                            // Auto-fill Yesterday's number from historical record, previous day result, or saved results!
+                            let finalYest = chartYestVal;
+                            if (!finalYest || finalYest === 'XX' || finalYest === '---') {
+                                const pubIST = SattaDateEngine.getISTDate(new Date(data.updatedAt || 0));
+                                const curDateUtc = Date.UTC(parseInt(todayIST.yearStr, 10), parseInt(todayIST.monthStr, 10) - 1, parseInt(todayIST.dayStr, 10));
+                                const pubDateUtc = Date.UTC(parseInt(pubIST.yearStr, 10), parseInt(pubIST.monthStr, 10) - 1, parseInt(pubIST.dayStr, 10));
+                                const diffDays = Math.floor((curDateUtc - pubDateUtc) / 86400000);
+
+                                if (diffDays === 0) {
+                                    finalYest = data.yesterday;
+                                } else if (diffDays === 1 && data.today && data.today !== 'XX' && data.today !== '---') {
+                                    finalYest = data.today;
+                                } else {
+                                    finalYest = (data.yesterday && data.yesterday !== '--' && data.yesterday !== '---' ? data.yesterday : fallbackYesterday);
+                                }
+                            }
+
                             if (yesterdayInput) {
-                                yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX') ? '' : finalYest;
+                                yesterdayInput.value = (finalYest === '--' || finalYest === '---' || finalYest === 'XX' || !finalYest) ? '' : finalYest;
                             }
 
                             const isLive = document.getElementById('is-live');
@@ -1003,6 +1018,9 @@
             const yestM = yestIST.monthStr;
             const yestD = yestIST.dayStr;
 
+            const isPublishingForToday = (pubY === todayIST.yearStr && pubM === todayIST.monthStr && pubD === todayIST.dayStr);
+            const pubTimestamp = isPublishingForToday ? Date.now() : (new Date(parseInt(pubY, 10), parseInt(pubM, 10) - 1, parseInt(pubD, 10), 23, 59, 0)).getTime();
+
             const newData = {
                 name: mName,
                 today: todayVal,
@@ -1012,7 +1030,7 @@
                 position: posVal,
                 isPinned: isPinned,
                 badge: finalBadge,
-                updatedAt: Date.now()
+                updatedAt: pubTimestamp
             };
 
             // Atomic 1-click update: Syncs live result card AND monthly chart table simultaneously!
