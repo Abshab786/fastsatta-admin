@@ -188,72 +188,34 @@
                 </div>
             </div>
 
-            <!-- Market Pin & Badge Tag Control -->
-            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 space-y-3">
-                <div class="grid grid-cols-2 gap-3 items-center">
-                    <div>
-                        <label class="block text-xs font-black text-indigo-800 mb-1">MARKET POSITION 🔢</label>
-                        <select id="position-select" onchange="syncPinFromPosition(this.value, 'is-pinned')" class="w-full p-2.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none">
-                            <option value="0">0 - Auto System Order</option>
-                            <option value="1">1 - Top #1 Position 👑</option>
-                            <option value="2">2 - Top #2 Position</option>
-                            <option value="3">3 - Top #3 Position</option>
-                            <option value="4">4 - Top #4 Position</option>
-                            <option value="5">5 - Top #5 Position</option>
-                            <option value="6">6 - Top #6 Position</option>
-                            <option value="7">7 - Top #7 Position</option>
-                            <option value="8">8 - Top #8 Position</option>
-                            <option value="9">9 - Top #9 Position</option>
-                            <option value="10">10 - Top #10 Position</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col items-end">
-                        <label class="block text-[10px] font-black text-indigo-800 mb-1 uppercase">Pin To Top</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer">
-                            <input type="checkbox" id="is-pinned" onchange="syncPositionFromPin(this.checked, 'position-select')" class="w-5 h-5 rounded cursor-pointer">
-                            <span class="text-xs font-black text-indigo-900">PINNED 📌</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="pt-2 border-t border-indigo-100">
-                    <label class="block text-xs font-black text-indigo-700 mb-1">BADGE / TAG (सामने टैग लगाएँ/हटाएँ) 🏷️</label>
-                    <select id="badge-select" onchange="toggleCustomBadgeInput(this.value, 'custom-badge-text')" class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none focus:border-indigo-500">
-                        <option value="AUTO">AUTO (समय अनुसार / Default)</option>
-                        <option value="NONE">NONE (छुपाएँ / Hide Badge)</option>
-                        <option value="LIVE ⚡">LIVE ⚡ (लाल ब्लिंकिंग - Live Tag)</option>
-                        <option value="NEW ⚡">NEW ⚡ (हरा ब्लिंकिंग - New Tag)</option>
-                        <option value="NEXT ⏳">NEXT ⏳ (पीला पल्स - Next Tag)</option>
-                        <option value="HOT 🔥">HOT 🔥 (हॉट Blinking)</option>
-                        <option value="LEAK 💥">LEAK 💥 (लीक Blinking)</option>
-                        <option value="JACKPOT 💰">JACKPOT 💰 (गोल्डन Bouncing)</option>
-                        <option value="CUSTOM">CUSTOM (कस्टम लिखें...)</option>
-                    </select>
-                    <input type="text" id="custom-badge-text" placeholder="Enter custom badge text..." class="w-full p-3 mt-2 bg-white border-2 border-indigo-200 rounded-xl text-xs font-bold hidden outline-none focus:border-indigo-500">
-                </div>
-            </div>
-
-            <div class="flex gap-2">
+            <div class="flex gap-2 pt-2">
                 <button onclick="publish()" id="btn-publish" class="flex-1 bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xl cursor-pointer">
-                    SAVE & PUBLISH 🚀
+                    SAVE & PUBLISH RESULT 🚀
                 </button>
                 <button onclick="resetForm()" class="bg-gray-100 text-gray-500 px-6 rounded-2xl font-bold hover:bg-gray-200 transition text-xs uppercase cursor-pointer">Reset</button>
             </div>
         </div>
 
-        <!-- Section 2: Market Position & Badges -->
+        <!-- Section 2: Market Position & Badges (SINGLE DEDICATED SECTION) -->
         <div id="cat-section-order" class="space-y-6 hidden">
-            <div class="bg-indigo-50/80 p-6 rounded-3xl border-2 border-indigo-200 space-y-4 shadow-sm">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 p-5 rounded-2xl text-white shadow-md">
+                <div class="text-xs font-black uppercase tracking-widest text-indigo-200">Exclusive Rank & Tag Manager</div>
+                <div class="text-xl font-black mt-0.5">Market Position, Pin & Badge Control 📌🏷️</div>
+                <div class="text-xs text-indigo-100 font-medium mt-1">Set exact market order rank (1-10) or attach custom blinking badges globally.</div>
+            </div>
+
+            <div class="bg-indigo-50/90 p-6 rounded-3xl border-2 border-indigo-200 space-y-5 shadow-sm">
                 <div>
-                    <label class="block text-xs font-black text-indigo-900 mb-2 uppercase">1. Select Market To Edit Position / Badge</label>
-                    <select id="standalone-pin-market-select" onchange="loadStandalonePinBadge(this.value)" class="w-full p-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-indigo-900 outline-none focus:border-indigo-600 shadow-xs">
+                    <label class="block text-xs font-black text-indigo-900 mb-2 uppercase tracking-wide">1. Select Market To Edit Position / Badge</label>
+                    <select id="standalone-pin-market-select" onchange="loadStandalonePinBadge(this.value)" class="w-full p-4 bg-white border-2 border-indigo-200 rounded-xl font-black text-indigo-950 outline-none focus:border-indigo-600 shadow-xs text-sm">
                         <!-- JS Injected -->
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 bg-white p-4 rounded-2xl border border-indigo-100 shadow-xs">
+                <div class="grid grid-cols-2 gap-3 bg-white p-4.5 rounded-2xl border border-indigo-100 shadow-xs">
                     <div>
                         <label class="block text-xs font-black text-indigo-900 mb-1">POSITION / RANK 🔢</label>
-                        <select id="standalone-position-select" onchange="syncPinFromPosition(this.value, 'standalone-is-pinned')" class="w-full p-2.5 bg-indigo-50 border-2 border-indigo-200 rounded-xl font-black text-xs text-indigo-900 outline-none focus:border-indigo-500">
+                        <select id="standalone-position-select" onchange="syncPinFromPosition(this.value, 'standalone-is-pinned')" class="w-full p-3 bg-indigo-50 border-2 border-indigo-200 rounded-xl font-black text-xs text-indigo-900 outline-none focus:border-indigo-600">
                             <option value="0">0 - Auto System Order</option>
                             <option value="1">1 - Top #1 Position 👑</option>
                             <option value="2">2 - Top #2 Position</option>
@@ -269,16 +231,16 @@
                     </div>
                     <div class="flex flex-col justify-center items-end">
                         <label class="block text-[10px] font-black text-indigo-700 uppercase mb-1">Pin To Top</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer">
+                        <label class="flex items-center gap-2 cursor-pointer bg-indigo-50 px-3 py-2.5 rounded-xl border border-indigo-200">
                             <input type="checkbox" id="standalone-is-pinned" onchange="syncPositionFromPin(this.checked, 'standalone-position-select')" class="w-5 h-5 rounded cursor-pointer">
                             <span class="text-xs font-black text-indigo-900">PINNED 📌</span>
                         </label>
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl border border-indigo-100 space-y-2 shadow-xs">
+                <div class="bg-white p-4.5 rounded-2xl border border-indigo-100 space-y-2 shadow-xs">
                     <label class="block text-xs font-black text-indigo-900 mb-1 uppercase">2. Select / Custom Badge Tag 🏷️</label>
-                    <select id="standalone-badge-select" onchange="toggleCustomBadgeInput(this.value, 'standalone-custom-badge-text')" class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none focus:border-indigo-500">
+                    <select id="standalone-badge-select" onchange="toggleCustomBadgeInput(this.value, 'standalone-custom-badge-text')" class="w-full p-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-xs text-indigo-900 outline-none focus:border-indigo-600">
                         <option value="AUTO">AUTO (समय अनुसार / Default)</option>
                         <option value="NONE">NONE (छुपाएँ / Hide Badge)</option>
                         <option value="LIVE ⚡">LIVE ⚡ (लाल ब्लिंकिंग - Live Tag)</option>
@@ -289,11 +251,11 @@
                         <option value="JACKPOT 💰">JACKPOT 💰 (गोल्डन Bouncing)</option>
                         <option value="CUSTOM">CUSTOM (कस्टम लिखें...)</option>
                     </select>
-                    <input type="text" id="standalone-custom-badge-text" placeholder="Write custom badge text..." class="w-full p-3 bg-white border-2 border-indigo-200 rounded-xl text-xs font-bold hidden outline-none focus:border-indigo-500">
+                    <input type="text" id="standalone-custom-badge-text" placeholder="Write custom badge text..." class="w-full p-3.5 bg-white border-2 border-indigo-200 rounded-xl text-xs font-bold hidden outline-none focus:border-indigo-600">
                 </div>
 
                 <button onclick="saveStandalonePinBadge()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-indigo-700 transition shadow-lg active:scale-95 cursor-pointer">
-                    UPDATE POSITION & BADGE ONLY 📌⚡
+                    SAVE POSITION & BADGE NOW 📌🏷️
                 </button>
             </div>
         </div>
@@ -438,33 +400,8 @@
                     <input type="text" id="edit-market-restime" placeholder="HH:MM" class="w-full p-3 border rounded-xl font-bold focus:border-blue-500 outline-none">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200">
-                    <div>
-                        <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Pin To Top 📌</label>
-                        <label class="flex items-center gap-2 mt-2 cursor-pointer">
-                            <input type="checkbox" id="edit-is-pinned" class="w-5 h-5 rounded">
-                            <span class="text-xs font-bold text-slate-700">Top Priority</span>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-indigo-600 mb-1 uppercase">Badge / Tag 🏷️</label>
-                        <select id="edit-badge-select" onchange="toggleCustomBadgeInput(this.value, 'edit-custom-badge-text')" class="w-full p-2.5 bg-white border rounded-xl font-bold text-xs text-slate-800 outline-none">
-                            <option value="AUTO">AUTO (Default)</option>
-                            <option value="NONE">NONE (Hide)</option>
-                            <option value="LIVE ⚡">LIVE ⚡</option>
-                            <option value="NEW ⚡">NEW ⚡</option>
-                            <option value="NEXT ⏳">NEXT ⏳</option>
-                            <option value="HOT 🔥">HOT 🔥</option>
-                            <option value="LEAK 💥">LEAK 💥</option>
-                            <option value="JACKPOT 💰">JACKPOT 💰</option>
-                            <option value="CUSTOM">CUSTOM...</option>
-                        </select>
-                        <input type="text" id="edit-custom-badge-text" placeholder="Custom Tag..." class="w-full p-2.5 mt-2 bg-white border rounded-xl text-xs font-bold hidden outline-none">
-                    </div>
-                </div>
-
                 <button onclick="saveMarketSettings()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase hover:bg-black transition shadow-lg active:scale-95 cursor-pointer">
-                    Update Market Time/Name ⚡
+                    Update Market Name & Time ⚡
                 </button>
             </div>
         </div>
@@ -839,7 +776,7 @@
                 };
             });
 
-            // Include any custom market not in default list
+            // Include custom markets if any
             for (let k in cData) {
                 if (cData[k] && cData[k].id && !mergedList.some(item => item.id === cData[k].id)) {
                     mergedList.push({
@@ -908,13 +845,7 @@
                     let pubTimestamp = data.updatedAt || Date.now();
                     let pubDateObj = SattaDateEngine.getISTDate(new Date(pubTimestamp));
 
-                    if (selectedDateStr === todayDateStr) {
-                        lastLoadedToday = data.today || 'XX';
-                        document.getElementById('today-val').value = (data.today === 'XX' || data.today === '---') ? '' : data.today;
-                        document.getElementById('yesterday-val').value = (data.yesterday === 'XX' || data.yesterday === '---') ? '' : data.yesterday;
-                        document.getElementById('is-live').checked = !!data.live;
-                        document.getElementById('show-instantly').checked = !!data.showInstantly;
-                    } else if (pubDateObj.isoStr === selectedDateStr) {
+                    if (selectedDateStr === todayDateStr || pubDateObj.isoStr === selectedDateStr) {
                         lastLoadedToday = data.today || 'XX';
                         document.getElementById('today-val').value = (data.today === 'XX' || data.today === '---') ? '' : data.today;
                         document.getElementById('yesterday-val').value = (data.yesterday === 'XX' || data.yesterday === '---') ? '' : data.yesterday;
@@ -930,34 +861,11 @@
                             lastLoadedToday = (cVal && cVal !== 'XX' && cVal !== '---') ? cVal : 'XX';
                         });
                     }
-
-                    if (document.getElementById('position-select')) {
-                        document.getElementById('position-select').value = (data.position !== undefined) ? data.position : (data.isPinned ? 1 : 0);
-                    }
-                    if (document.getElementById('is-pinned')) {
-                        document.getElementById('is-pinned').checked = (data.position && data.position > 0) ? true : !!data.isPinned;
-                    }
-                    if (document.getElementById('badge-select')) {
-                        const bVal = data.badge || 'AUTO';
-                        const presetOptions = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
-                        if (presetOptions.includes(bVal)) {
-                            document.getElementById('badge-select').value = bVal;
-                            document.getElementById('custom-badge-text').classList.add('hidden');
-                        } else {
-                            document.getElementById('badge-select').value = 'CUSTOM';
-                            document.getElementById('custom-badge-text').value = bVal;
-                            document.getElementById('custom-badge-text').classList.remove('hidden');
-                        }
-                    }
                 } else {
                     document.getElementById('today-val').value = '';
                     document.getElementById('yesterday-val').value = '';
                     document.getElementById('is-live').checked = false;
                     document.getElementById('show-instantly').checked = false;
-                    if (document.getElementById('position-select')) document.getElementById('position-select').value = '0';
-                    if (document.getElementById('is-pinned')) document.getElementById('is-pinned').checked = false;
-                    if (document.getElementById('badge-select')) document.getElementById('badge-select').value = 'AUTO';
-                    if (document.getElementById('custom-badge-text')) document.getElementById('custom-badge-text').classList.add('hidden');
                     lastLoadedToday = 'XX';
                 }
             });
@@ -1001,16 +909,6 @@
             const isLive = document.getElementById('is-live').checked;
             const showInstantly = document.getElementById('show-instantly').checked;
 
-            const posSelect = document.getElementById('position-select');
-            const position = posSelect ? parseInt(posSelect.value, 10) : 0;
-            const isPinned = position > 0 || (document.getElementById('is-pinned') ? document.getElementById('is-pinned').checked : false);
-
-            const badgeSelect = document.getElementById('badge-select');
-            let badge = badgeSelect ? badgeSelect.value : 'AUTO';
-            if (badge === 'CUSTOM') {
-                badge = document.getElementById('custom-badge-text').value.trim() || 'AUTO';
-            }
-
             const targetYear = document.getElementById('pub-year').value;
             const targetMonth = document.getElementById('pub-month').value;
             const targetDay = document.getElementById('pub-day').value;
@@ -1025,10 +923,8 @@
             }
 
             let finalLive = isLive;
-            let finalBadge = badge;
             if (today !== 'XX' && today !== '---' && today !== '') {
                 if (!isLive) finalLive = false;
-                if (finalBadge === 'LIVE ⚡') finalBadge = 'AUTO';
             }
 
             db.ref('results/' + id).once('value', function(snap) {
@@ -1043,25 +939,32 @@
                     yesterday: yesterday,
                     live: finalLive,
                     showInstantly: showInstantly,
-                    position: position,
-                    isPinned: isPinned,
-                    badge: finalBadge,
                     updatedAt: publishTimestamp
                 };
 
+                // Preserve existing position, isPinned, and badge from Firebase DB
+                if (oldData.position !== undefined) payload.position = oldData.position;
+                if (oldData.isPinned !== undefined) payload.isPinned = oldData.isPinned;
+                if (oldData.badge !== undefined) {
+                    if (today !== 'XX' && today !== '---' && today !== '' && oldData.badge === 'LIVE ⚡') {
+                        payload.badge = 'AUTO'; // Clean up stale LIVE ⚡ badge when result is published
+                    } else {
+                        payload.badge = oldData.badge;
+                    }
+                }
+
                 db.ref('results/' + id).update(payload).then(function() {
-                    db.ref('settings/markets/' + id).update({ position: position, isPinned: isPinned, badge: badge });
                     db.ref(`charts/${targetYear}/${targetMonth}/${targetDay}/${id}`).set(today);
 
                     const status = document.getElementById('status');
-                    status.innerText = `✅ Saved ${name}: Today=${today}, Position=${position>0 ? '#'+position : 'Auto'}, Badge=${badge}! Date=${targetDay}-${targetMonth}-${targetYear}`;
+                    status.innerText = `✅ Result Saved for ${name}: Today=${today}, Yesterday=${yesterday}! Date=${targetDay}-${targetMonth}-${targetYear}`;
                     status.classList.remove('hidden');
                     status.style.display = 'block';
                     setTimeout(function() {
                         status.classList.add('hidden');
                         status.style.display = 'none';
                     }, 4000);
-                    alert(`${name} Result & Settings Published for Date ${targetDay}-${targetMonth}-${targetYear}! 🚀`);
+                    alert(`${name} Result Published for Date ${targetDay}-${targetMonth}-${targetYear}! 🚀`);
                 });
             });
         }
@@ -1115,8 +1018,7 @@
             db.ref('results/' + marketId).update({
                 position: position,
                 isPinned: isPinned,
-                badge: badge,
-                updatedAt: Date.now()
+                badge: badge
             }).then(function() {
                 const status = document.getElementById('status');
                 status.innerText = `✅ Position (#${position}) & Badge (${badge}) Updated for ${marketId}!`;
@@ -1135,35 +1037,26 @@
             const name = document.getElementById('edit-market-name').value.trim();
             const time = document.getElementById('edit-market-time').value.trim();
             const resTime = document.getElementById('edit-market-restime').value.trim();
-            const isPinned = document.getElementById('edit-is-pinned').checked;
-
-            const badgeSelect = document.getElementById('edit-badge-select');
-            let badge = badgeSelect ? badgeSelect.value : 'AUTO';
-            if (badge === 'CUSTOM') {
-                badge = document.getElementById('edit-custom-badge-text').value.trim() || 'AUTO';
-            }
 
             if (!id || !name) return alert("Select Market and enter Name!");
 
-            const mData = { id: id, name: name, time: time, resTime: resTime, isPinned: isPinned, badge: badge };
+            const mData = { id: id, name: name, time: time, resTime: resTime };
 
             db.ref('settings/markets/' + id).update(mData);
 
             db.ref('results/' + id).update({
                 name: name,
-                time: time,
-                isPinned: isPinned,
-                badge: badge
+                time: time
             }).then(function() {
                 const status = document.getElementById('status');
-                status.innerText = `✅ Market Settings Saved for ${name}!`;
+                status.innerText = `✅ Market Name & Time Saved for ${name}!`;
                 status.classList.remove('hidden');
                 status.style.display = 'block';
                 setTimeout(() => {
                     status.classList.add('hidden');
                     status.style.display = 'none';
                 }, 3000);
-                alert("Market Settings Updated Successfully!");
+                alert("Market Name & Time Updated Successfully!");
             });
         }
 
@@ -1174,20 +1067,6 @@
                 if (data) {
                     document.getElementById('edit-market-name').value = data.name || '';
                     document.getElementById('edit-market-time').value = data.time || '';
-                    document.getElementById('edit-is-pinned').checked = !!data.isPinned;
-
-                    if (document.getElementById('edit-badge-select')) {
-                        const bVal = data.badge || 'AUTO';
-                        const presetOptions = ['AUTO', 'NONE', 'LIVE ⚡', 'NEW ⚡', 'NEXT ⏳', 'HOT 🔥', 'LEAK 💥', 'JACKPOT 💰'];
-                        if (presetOptions.includes(bVal)) {
-                            document.getElementById('edit-badge-select').value = bVal;
-                            document.getElementById('edit-custom-badge-text').classList.add('hidden');
-                        } else {
-                            document.getElementById('edit-badge-select').value = 'CUSTOM';
-                            document.getElementById('edit-custom-badge-text').value = bVal;
-                            document.getElementById('edit-custom-badge-text').classList.remove('hidden');
-                        }
-                    }
                 }
             });
 
@@ -1321,13 +1200,6 @@
             document.getElementById('yesterday-val').value = '';
             document.getElementById('is-live').checked = false;
             document.getElementById('show-instantly').checked = false;
-            if (document.getElementById('position-select')) document.getElementById('position-select').value = '0';
-            if (document.getElementById('is-pinned')) document.getElementById('is-pinned').checked = false;
-            if (document.getElementById('badge-select')) document.getElementById('badge-select').value = 'AUTO';
-            if (document.getElementById('custom-badge-text')) {
-                document.getElementById('custom-badge-text').value = '';
-                document.getElementById('custom-badge-text').classList.add('hidden');
-            }
         }
 
         let currentTheme = 'normal';
