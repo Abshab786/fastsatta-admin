@@ -1024,6 +1024,13 @@
                 publishTimestamp = customDate.getTime();
             }
 
+            let finalLive = isLive;
+            let finalBadge = badge;
+            if (today !== 'XX' && today !== '---' && today !== '') {
+                if (!isLive) finalLive = false;
+                if (finalBadge === 'LIVE ⚡') finalBadge = 'AUTO';
+            }
+
             db.ref('results/' + id).once('value', function(snap) {
                 const oldData = snap.val() || {};
                 const name = oldData.name || id;
@@ -1034,15 +1041,16 @@
                     time: time,
                     today: today,
                     yesterday: yesterday,
-                    live: isLive,
+                    live: finalLive,
                     showInstantly: showInstantly,
                     position: position,
                     isPinned: isPinned,
-                    badge: badge,
+                    badge: finalBadge,
                     updatedAt: publishTimestamp
                 };
 
                 db.ref('results/' + id).update(payload).then(function() {
+                    db.ref('settings/markets/' + id).update({ position: position, isPinned: isPinned, badge: badge });
                     db.ref(`charts/${targetYear}/${targetMonth}/${targetDay}/${id}`).set(today);
 
                     const status = document.getElementById('status');
@@ -1103,6 +1111,7 @@
                 badge = document.getElementById('standalone-custom-badge-text').value.trim() || 'AUTO';
             }
 
+            db.ref('settings/markets/' + marketId).update({ position: position, isPinned: isPinned, badge: badge });
             db.ref('results/' + marketId).update({
                 position: position,
                 isPinned: isPinned,
